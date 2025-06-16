@@ -1,411 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - Human Care</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Human Login - Human Care</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
+      padding: 0;
+    }
+
+    body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      background: linear-gradient(to right, #fef4f6, #e6f2ff);
+      min-height: 100vh;
+      position: relative;
       overflow: hidden;
     }
 
-    .background-icons {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .icon {
+    .floating-icon {
       position: absolute;
-      font-size: 24px;
-      color: rgba(0, 0, 0, 0.1);
-      animation: float 10s infinite linear;
+      opacity: 0.15;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .floating-icon:nth-child(1) {
+      top: 10%;
+      left: 5%;
+      animation-delay: 0s;
+    }
+
+    .floating-icon:nth-child(2) {
+      top: 50%;
+      right: 10%;
+      animation-delay: 2s;
+    }
+
+    .floating-icon:nth-child(3) {
+      bottom: 15%;
+      left: 30%;
+      animation-delay: 4s;
     }
 
     @keyframes float {
-      from { transform: translateY(100vh); }
-      to { transform: translateY(-100vh); }
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
     }
 
     .container {
-      z-index: 1;
-      position: relative;
-      height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo {
+      height: 60px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #333;
     }
 
     .login-box {
-      background: #ffffff;
-      padding: 40px 30px;
+      background-color: #ffffffcc;
+      padding: 30px;
       border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      width: 90%;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
       max-width: 400px;
       text-align: center;
     }
 
-    .login-box img {
-      height: 60px;
-      margin-bottom: 16px;
-    }
-
-    .login-box h2 {
-      margin-bottom: 24px;
-      font-size: 24px;
-      color: #3a3a3a;
-    }
-
-    input[type="text"], input[type="password"] {
+    .login-box input {
       width: 100%;
       padding: 12px;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 16px;
     }
 
-    .forgot {
-      text-align: right;
-      margin-bottom: 16px;
-    }
-
-    .forgot a {
-      font-size: 13px;
-      color: #3a7bfd;
-      text-decoration: none;
-    }
-
-    button {
+    .login-box button {
       width: 100%;
       padding: 12px;
       background-color: #3a7bfd;
-      color: #fff;
       border: none;
       border-radius: 8px;
+      color: white;
       font-size: 16px;
       cursor: pointer;
     }
 
-    .login-options {
-      margin-top: 16px;
-      font-size: 14px;
+    .login-box button:hover {
+      background-color: #2f65d9;
     }
 
-    .login-options a {
-      color: #3a7bfd;
+    .forgot-password {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: #555;
       text-decoration: none;
     }
-  </style>
-</head>
-<body>
-  <div class="background-icons">
-    <i class="fas fa-pills icon" style="top: 20%; left: 10%; animation-delay: 0s;"></i>
-    <i class="fas fa-syringe icon" style="top: 50%; left: 80%; animation-delay: 2s;"></i>
-    <i class="fas fa-stethoscope icon" style="top: 80%; left: 40%; animation-delay: 4s;"></i>
-    <i class="fas fa-heartbeat icon" style="top: 60%; left: 20%; animation-delay: 6s;"></i>
-    <i class="fas fa-user-md icon" style="top: 30%; left: 70%; animation-delay: 8s;"></i>
-  </div>
 
-  <div class="container">
-    <div class="login-box">
-      <img src="assets/human-logo.png" alt="Human Logo" />
-      <h2>Human</h2>
-      <form>
-        <input type="text" placeholder="Enter your Human Number" required />
-        <input type="password" placeholder="Password" required />
-        <div class="forgot">
-          <a href="#">Forgot Password?</a>
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <div class="login-options">
-        <p>Not a Human yet? <a href="register.html">Become a Human</a></p>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - Human Care</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #e3f2fd, #fce4ec);
-      overflow: hidden;
+    .forgot-password:hover {
+      text-decoration: underline;
     }
 
-    .background-icons {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
+    .register-link {
+      font-size: 14px;
+      margin-top: 16px;
     }
 
-    .icon {
-      position: absolute;
-      font-size: 24px;
-      color: rgba(0, 0, 0, 0.1);
-      animation: float 10s infinite linear;
+    .register-link a {
+      color: #3a7bfd;
+      text-decoration: none;
+      font-weight: 600;
     }
 
-    @keyframes float {
-      from { transform: translateY(100vh); }
-      to { transform: translateY(-100vh); }
-    }
-
-    .container {
-      z-index: 1;
-      position: relative;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .login-box {
-      background: #ffffff;
-      padding: 40px 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      width: 90%;
-      max-width: 400px;
+    footer {
       text-align: center;
-    }
-
-    .login-box img {
-      height: 60px;
-      margin-bottom: 16px;
-    }
-
-    .login-box h2 {
-      margin-bottom: 24px;
-      font-size: 24px;
-      color: #3a3a3a;
-    }
-
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      padding: 20px;
       font-size: 14px;
-    }
-
-    .forgot {
-      text-align: right;
-      margin-bottom: 16px;
-    }
-
-    .forgot a {
-      font-size: 13px;
-      color: #3a7bfd;
-      text-decoration: none;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #3a7bfd;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .login-options {
-      margin-top: 16px;
-      font-size: 14px;
-    }
-
-    .login-options a {
-      color: #3a7bfd;
-      text-decoration: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="background-icons">
-    <i class="fas fa-pills icon" style="top: 20%; left: 10%; animation-delay: 0s;"></i>
-    <i class="fas fa-syringe icon" style="top: 50%; left: 80%; animation-delay: 2s;"></i>
-    <i class="fas fa-stethoscope icon" style="top: 80%; left: 40%; animation-delay: 4s;"></i>
-    <i class="fas fa-heartbeat icon" style="top: 60%; left: 20%; animation-delay: 6s;"></i>
-    <i class="fas fa-user-md icon" style="top: 30%; left: 70%; animation-delay: 8s;"></i>
-  </div>
-
-  <div class="container">
-    <div class="login-box">
-      <img src="logo.png" alt="Human Logo" />
-      <h2>Human</h2>
-      <form>
-        <input type="text" placeholder="Enter your Human Number" required />
-        <input type="password" placeholder="Password" required />
-        <div class="forgot">
-          <a href="#">Forgot Password?</a>
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <div class="login-options">
-        <p>Not a Human yet? <a href="register.html">Become a Human</a></p>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - Human Care</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #e3f2fd, #fce4ec);
-      overflow: hidden;
-    }
-
-    .background-icons {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .icon {
-      position: absolute;
-      font-size: 24px;
-      color: rgba(0, 0, 0, 0.1);
-      animation: float 10s infinite linear;
-    }
-
-    @keyframes float {
-      from { transform: translateY(100vh); }
-      to { transform: translateY(-100vh); }
-    }
-
-    .container {
-      z-index: 1;
+      color: #777;
+      background-color: #f9f9f9;
       position: relative;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .login-box {
-      background: #ffffff;
-      padding: 40px 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    .login-box img {
-      height: 60px;
-      margin-bottom: 16px;
-    }
-
-    .login-box h2 {
-      margin-bottom: 24px;
-      font-size: 24px;
-      color: #3a3a3a;
-    }
-
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-    .forgot {
-      text-align: right;
-      margin-bottom: 16px;
-    }
-
-    .forgot a {
-      font-size: 13px;
-      color: #3a7bfd;
-      text-decoration: none;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #3a7bfd;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .login-options {
-      margin-top: 16px;
-      font-size: 14px;
-    }
-
-    .login-options a {
-      color: #3a7bfd;
-      text-decoration: none;
+      z-index: 1;
     }
   </style>
 </head>
+
 <body>
-  <div class="background-icons">
-    <i class="fas fa-pills icon" style="top: 20%; left: 10%; animation-delay: 0s;"></i>
-    <i class="fas fa-syringe icon" style="top: 50%; left: 80%; animation-delay: 2s;"></i>
-    <i class="fas fa-stethoscope icon" style="top: 80%; left: 40%; animation-delay: 4s;"></i>
-    <i class="fas fa-heartbeat icon" style="top: 60%; left: 20%; animation-delay: 6s;"></i>
-    <i class="fas fa-user-md icon" style="top: 30%; left: 70%; animation-delay: 8s;"></i>
-  </div>
+  <!-- Floating Icons -->
+  <img src="https://cdn-icons-png.flaticon.com/512/2972/2972515.png" class="floating-icon" style="width: 60px;" />
+  <img src="https://cdn-icons-png.flaticon.com/512/4285/4285571.png" class="floating-icon" style="width: 50px;" />
+  <img src="https://cdn-icons-png.flaticon.com/512/996/996179.png" class="floating-icon" style="width: 70px;" />
 
   <div class="container">
+    <img src="assets/human-logo.png" alt="Human Care Logo" class="logo" />
+    <h2>Human</h2>
+
     <div class="login-box">
-      <img src="assets/logo.png" alt="Human Logo" />
-      <h2>Human</h2>
-      <form>
-        <input type="text" placeholder="Enter your Human Number" required />
-        <input type="password" placeholder="Password" required />
-        <div class="forgot">
-          <a href="#">Forgot Password?</a>
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <div class="login-options">
-        <p>Not a Human yet? <a href="register.html">Become a Human</a></p>
+      <input type="text" placeholder="Enter your Human Number" />
+      <input type="password" placeholder="Enter your Password" />
+      <a href="#" class="forgot-password">Forgot Password?</a>
+      <button>Login</button>
+      <div class="register-link">
+        Not a Human yet? <a href="#">Become a Human</a>
       </div>
     </div>
   </div>
+
+  <footer>
+    © 2025 <strong>HomosaP Healthcare Pvt Ltd</strong>. All rights reserved.
+  </footer>
 </body>
+
 </html>
