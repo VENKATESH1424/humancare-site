@@ -8,14 +8,15 @@ body {
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   padding: 40px 80px 20px;
 }
 
 .logo-container {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 
 .logo-container img {
@@ -34,29 +35,17 @@ body {
   color: #6e6e6e;
 }
 
-.homosap-logo img {
-  height: 100px;
-}
-
 .hero {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 80px 40px;
-  animation: fadeInUp 1.5s ease forwards;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  flex-wrap: wrap;
 }
 
 .hero-text {
   max-width: 50%;
+  min-width: 300px;
 }
 
 .hero-text h1 {
@@ -68,9 +57,9 @@ body {
 
 .hero-text p {
   font-size: 18px;
+  color: #4a4a4a;
   line-height: 1.6;
   margin-bottom: 30px;
-  color: #4a4a4a;
 }
 
 .hero-buttons button {
@@ -80,33 +69,28 @@ body {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.hero-buttons button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .get-started {
   background-color: #3a7bfd;
-  color: #fff;
+  color: #ffffff;
 }
 
 .how-it-works {
   background-color: #55b99d;
-  color: #fff;
+  color: #ffffff;
 }
 
 .hero-image img {
   max-width: 100%;
   height: auto;
-  animation: float 3s ease-in-out infinite;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+.footer {
+  text-align: left;
+  padding: 20px 80px 40px;
+  font-size: 16px;
+  color: #333;
 }
 
 #role-section {
@@ -139,19 +123,15 @@ body {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.role-card i {
-  font-size: 32px;
-  margin-bottom: 10px;
+.role-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .role-title {
   font-size: 20px;
   font-weight: bold;
-}
-
-.role-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  margin-top: 10px;
 }
 
 #how-it-works {
@@ -162,47 +142,10 @@ body {
 
 .slide {
   display: none;
-  font-size: 20px;
-  padding: 30px;
-  border-radius: 16px;
-  background-color: #fff;
-  margin: 20px auto;
-  max-width: 600px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  font-size: 24px;
+  margin: 20px 0;
 }
 
 .slide.active {
   display: block;
-}
-
-.slide i {
-  font-size: 48px;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.dots {
-  margin-top: 20px;
-}
-
-.dot {
-  height: 12px;
-  width: 12px;
-  margin: 0 5px;
-  background-color: #ccc;
-  border-radius: 50%;
-  display: inline-block;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.dot.active {
-  background-color: #3a7bfd;
-}
-
-.footer {
-  text-align: left;
-  padding: 20px 80px 40px;
-  font-size: 16px;
-  color: #333;
 }
