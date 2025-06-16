@@ -3,246 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register - Human Care</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #ffe5ec;
-      overflow-x: hidden;
-      animation: fadeIn 1.2s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .background-icons {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .background-icons i {
-      position: absolute;
-      font-size: 30px;
-      opacity: 0.1;
-      animation: float 10s infinite ease-in-out;
-      color: #d05b8d;
-    }
-
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-      100% { transform: translateY(0); }
-    }
-
-    .container {
-      position: relative;
-      z-index: 2;
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 40px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #2e2e2e;
-    }
-
-    form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    label {
-      flex: 1 1 45%;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-top: 4px;
-    }
-
-    .full-width {
-      flex: 1 1 100%;
-    }
-
-    button {
-      margin-top: 20px;
-      background-color: #3a7bfd;
-      color: white;
-      padding: 14px 24px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background-color: #2a62d4;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      color: #888;
-      font-size: 14px;
-    }
-  </style>
+  <title>Human Registration</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
 </head>
 <body>
-
-<div class="background-icons">
-  <i class="fas fa-stethoscope" style="top:10%; left:20%;"></i>
-  <i class="fas fa-syringe" style="top:30%; left:80%;"></i>
-  <i class="fas fa-pills" style="top:60%; left:10%;"></i>
-  <i class="fas fa-heartbeat" style="top:80%; left:70%;"></i>
-</div>
-
-<div class="container">
-  <h2>Become a Human</h2>
-  <form id="registerForm">
-    <label class="full-width">Full Name
-      <input type="text" id="fullName" required />
-    </label>
-
-    <label>Date of Birth
-      <input type="date" id="dob" required />
-    </label>
-
-    <label>Gender
+  <div class="register-container">
+    <h1>Become a Human</h1>
+    <form id="registerForm">
+      <!-- Your existing form fields go here -->
+      <input type="text" id="fullName" placeholder="Full Name" required />
+      <input type="date" id="dob" placeholder="Date of Birth" required />
       <select id="gender" required>
-        <option value="">Select</option>
+        <option value="">Select Gender</option>
         <option>Male</option>
         <option>Female</option>
         <option>Other</option>
       </select>
-    </label>
+      <input type="tel" id="phoneNumber" placeholder="Phone Number" required />
+      <input type="tel" id="emergencyContact" placeholder="Emergency Contact Number" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <textarea id="address" placeholder="Address" required></textarea>
+      <input type="text" id="bloodGroup" placeholder="Blood Group" required />
+      <input type="text" id="caste" placeholder="Caste" required />
+      <input type="text" id="education" placeholder="Education" required />
+      <input type="text" id="motherTongue" placeholder="Mother Tongue" required />
+      <input type="text" id="occupation" placeholder="Occupation" required />
+      <input type="text" id="aadhaar" placeholder="Aadhaar Number" required />
+      <input type="text" id="income" placeholder="Family Income" required />
+      <input type="text" id="bpl" placeholder="BPL Number" required />
+      <input type="text" id="abha" placeholder="ABHA Number (Optional)" />
+      <input type="text" id="esi" placeholder="ESI Number (Optional)" />
+      <input type="text" id="vajpayee" placeholder="Vajpayee Arogyashree Yojana No. (Optional)" />
 
-    <label>Phone Number
-      <input type="tel" id="phoneNumber" required placeholder="+91xxxxxxxxxx" />
-    </label>
+      <button type="submit">Register</button>
+    </form>
+  </div>
 
-    <label>Emergency Contact Number
-      <input type="tel" id="emergencyContact" required />
-    </label>
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", function (e) {
+      e.preventDefault(); // Prevent form from refreshing
 
-    <label class="full-width">Email
-      <input type="email" id="email" required />
-    </label>
-
-    <label class="full-width">Address
-      <input type="text" id="address" required />
-    </label>
-
-    <label>Blood Group
-      <input type="text" id="bloodGroup" />
-    </label>
-
-    <label>Caste
-      <input type="text" id="caste" />
-    </label>
-
-    <label>Education
-      <input type="text" id="education" />
-    </label>
-
-    <label>Mother Tongue
-      <input type="text" id="motherTongue" />
-    </label>
-
-    <label>Occupation
-      <input type="text" id="occupation" />
-    </label>
-
-    <label class="full-width">Aadhaar Number
-      <input type="text" id="aadhaar" required />
-    </label>
-
-    <label>Family Income
-      <input type="text" id="income" />
-    </label>
-
-    <label>BPL Number
-      <input type="text" id="bpl" />
-    </label>
-
-    <label>ABHA Number (optional)
-      <input type="text" id="abha" />
-    </label>
-
-    <label>ESI Number (optional)
-      <input type="text" id="esi" />
-    </label>
-
-    <label class="full-width">Vajpayee Arogyashree Yojana Account Number (optional)
-      <input type="text" id="vajpayee" />
-    </label>
-
-    <button type="submit">Register</button>
-  </form>
-</div>
-
-<footer>All data is confidential & encrypted under Human Care</footer>
-
-<div id="recaptcha-container"></div>
-
- <script>
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
-      authDomain: "humancare-web1.firebaseapp.com",
-      projectId: "humancare-web1",
-      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com/",
-      appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
-    };
-
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
-  document.getElementById("registerForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const phone = document.getElementById("phoneNumber").value;
-
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-      size: 'invisible',
-      callback: function(response) {
-        sendOTP();
+      const phone = document.getElementById("phoneNumber").value;
+      if (!phone) {
+        alert("Phone number is required to continue.");
+        return;
       }
+
+      // Save form data to session storage (for use in verification.html)
+      sessionStorage.setItem("phoneNumber", phone);
+
+      // Proceed to OTP verification page
+      window.location.href = "verification.html";
     });
-
-    function sendOTP() {
-      auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
-        .then((confirmationResult) => {
-          sessionStorage.setItem('registrationForm', JSON.stringify(Object.fromEntries(new FormData(document.getElementById('registerForm')))));
-          sessionStorage.setItem('confirmationResult', JSON.stringify(confirmationResult));
-          window.location.href = 'verification.html';
-        })
-        .catch((error) => {
-          alert("Error: " + error.message);
-        });
-    }
-
-    sendOTP();
-  });
-</script>
+  </script>
 </body>
 </html>
