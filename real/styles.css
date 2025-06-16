@@ -1,155 +1,208 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f9f9f9;
+  background-color: #ffe5ec;
   color: #333;
+  scroll-behavior: smooth;
 }
 
 .header {
-  background: #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 40px 80px 20px;
 }
 
 .logo-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
 }
 
 .logo-container img {
-  height: 60px;
+  height: 40px;
+  margin-bottom: 8px;
 }
 
-.title {
-  font-size: 28px;
+.logo-container .title {
+  font-size: 24px;
   font-weight: bold;
-  margin-top: 8px;
+  color: #2e2e2e;
 }
 
 .tagline {
   font-size: 14px;
-  color: #888;
+  color: #6e6e6e;
+}
+
+.homosap-logo img {
+  height: 100px;
 }
 
 .hero {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 80px 60px;
-  background: linear-gradient(to right, #e3f2fd, #fce4ec);
+  padding: 20px 80px 40px;
+  animation: fadeInUp 1.5s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hero-text {
-  flex: 1;
   max-width: 50%;
 }
 
 .hero-text h1 {
-  font-size: 36px;
+  font-size: 48px;
+  font-weight: 700;
+  color: #2e2e2e;
   margin-bottom: 20px;
-  color: #2c3e50;
 }
 
 .hero-text p {
   font-size: 18px;
-  color: #555;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: #4a4a4a;
 }
 
 .hero-buttons button {
-  padding: 12px 20px;
-  margin-right: 16px;
-  background-color: #3a7bfd;
-  border: none;
-  color: #fff;
-  border-radius: 8px;
   font-size: 16px;
+  padding: 12px 24px;
+  margin-right: 20px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .hero-buttons button:hover {
-  background-color: #235dff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.get-started {
+  background-color: #3a7bfd;
+  color: #fff;
+}
+
+.how-it-works {
+  background-color: #55b99d;
+  color: #fff;
 }
 
 .hero-image img {
-  max-width: 500px;
+  max-width: 100%;
   height: auto;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 #role-section {
-  text-align: center;
-  padding: 60px 20px;
-  background: #fff;
+  padding: 60px 80px;
+  background-color: #fffaf3;
 }
 
 #role-section h2 {
-  font-size: 28px;
-  margin-bottom: 32px;
-  color: #333;
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 40px;
 }
 
 .roles {
   display: flex;
-  justify-content: center;
-  gap: 40px;
+  justify-content: space-around;
   flex-wrap: wrap;
 }
 
 .role-card {
   text-decoration: none;
   color: inherit;
-  width: 160px;
-  padding: 24px;
-  background: #f7f7f7;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  flex: 1 1 200px;
+  margin: 20px;
+  padding: 20px;
+  background-color: #fdfdfd;
+  border-radius: 12px;
   text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.role-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  cursor: pointer;
+.role-card i {
+  font-size: 32px;
+  margin-bottom: 10px;
 }
 
 .role-title {
-  margin-top: 12px;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.role-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 #how-it-works {
-  padding: 60px 20px;
-  background: #f0f0f0;
+  padding: 60px 80px;
+  background-color: #fef6f9;
   text-align: center;
-}
-
-#how-it-works h2 {
-  font-size: 28px;
-  margin-bottom: 32px;
 }
 
 .slide {
   display: none;
-  font-size: 18px;
-  color: #444;
+  font-size: 20px;
+  padding: 30px;
+  border-radius: 16px;
+  background-color: #fff;
+  margin: 20px auto;
+  max-width: 600px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .slide.active {
   display: block;
-  font-weight: 600;
+}
+
+.slide i {
+  font-size: 48px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.dots {
+  margin-top: 20px;
+}
+
+.dot {
+  height: 12px;
+  width: 12px;
+  margin: 0 5px;
+  background-color: #ccc;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dot.active {
+  background-color: #3a7bfd;
 }
 
 .footer {
-  background: #fff;
-  padding: 20px;
-  text-align: center;
-  font-size: 14px;
-  color: #888;
-  border-top: 1px solid #e0e0e0;
+  text-align: left;
+  padding: 20px 80px 40px;
+  font-size: 16px;
+  color: #333;
 }
