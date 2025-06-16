@@ -3,148 +3,209 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register as a Human</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <title>Register - Human Care</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #e7f1ff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ffe5ec;
       overflow-x: hidden;
+      animation: fadeIn 1.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .background-icons {
       position: fixed;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
       overflow: hidden;
     }
 
     .background-icons i {
       position: absolute;
-      font-size: 40px;
-      color: rgba(0, 0, 0, 0.05);
-      animation: float 20s linear infinite;
+      font-size: 30px;
+      opacity: 0.1;
+      animation: float 10s infinite ease-in-out;
+      color: #d05b8d;
     }
 
     @keyframes float {
-      0% { transform: translateY(100vh); }
-      100% { transform: translateY(-100vh); }
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
     }
 
     .container {
+      position: relative;
+      z-index: 2;
       max-width: 700px;
-      margin: 80px auto;
-      background: #fff;
-      padding: 30px;
+      margin: 40px auto;
+      padding: 40px;
+      background: white;
       border-radius: 16px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-      animation: fadeIn 1s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 20px;
-      color: #2c3e50;
+      margin-bottom: 30px;
+      color: #2e2e2e;
     }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    label {
+      flex: 1 1 45%;
+      font-weight: bold;
+      font-size: 14px;
     }
 
     input, select {
       width: 100%;
       padding: 10px;
-      font-size: 14px;
       border: 1px solid #ccc;
       border-radius: 8px;
+      margin-top: 4px;
     }
 
     .full-width {
-      grid-column: span 2;
+      flex: 1 1 100%;
     }
 
     button {
-      width: 100%;
-      padding: 14px;
       margin-top: 20px;
-      background: #3a7bfd;
+      background-color: #3a7bfd;
       color: white;
+      padding: 14px 24px;
       border: none;
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
+      transition: 0.3s;
     }
 
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
+    button:hover {
+      background-color: #2a62d4;
     }
 
     footer {
       text-align: center;
-      padding: 15px;
-      color: #666;
+      margin-top: 40px;
+      color: #888;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
-  <div class="background-icons">
-    <i class="fas fa-pills" style="left:5%; animation-delay: 1s;"></i>
-    <i class="fas fa-stethoscope" style="left:25%; animation-delay: 3s;"></i>
-    <i class="fas fa-syringe" style="left:50%; animation-delay: 0s;"></i>
-    <i class="fas fa-heartbeat" style="left:70%; animation-delay: 2s;"></i>
-    <i class="fas fa-notes-medical" style="left:90%; animation-delay: 4s;"></i>
-  </div>
+<div class="background-icons">
+  <i class="fas fa-stethoscope" style="top:10%; left:20%;"></i>
+  <i class="fas fa-syringe" style="top:30%; left:80%;"></i>
+  <i class="fas fa-pills" style="top:60%; left:10%;"></i>
+  <i class="fas fa-heartbeat" style="top:80%; left:70%;"></i>
+</div>
 
-  <div class="container">
-    <h2>Become a Human</h2>
-    <div class="form-grid">
-      <input type="text" id="fullName" placeholder="Full Name" />
-      <input type="date" id="dob" placeholder="Date of Birth" />
-      <select id="gender">
-        <option value="">Select Gender</option>
+<div class="container">
+  <h2>Become a Human</h2>
+  <form id="registerForm">
+    <label class="full-width">Full Name
+      <input type="text" id="fullName" required />
+    </label>
+
+    <label>Date of Birth
+      <input type="date" id="dob" required />
+    </label>
+
+    <label>Gender
+      <select id="gender" required>
+        <option value="">Select</option>
         <option>Male</option>
         <option>Female</option>
         <option>Other</option>
       </select>
-      <input type="tel" id="phone" placeholder="Phone Number" />
-      <input type="tel" id="emergency" placeholder="Emergency Contact Number" />
-      <input type="email" id="email" placeholder="Email" />
-      <input type="text" id="address" class="full-width" placeholder="Address" />
-      <input type="text" id="bloodGroup" placeholder="Blood Group" />
-      <input type="text" id="caste" placeholder="Caste" />
-      <input type="text" id="education" placeholder="Education" />
-      <input type="text" id="motherTongue" placeholder="Mother Tongue" />
-      <input type="text" id="occupation" placeholder="Occupation" />
-      <input type="text" id="aadhaar" placeholder="Aadhaar Number" />
-      <input type="number" id="income" placeholder="Family Income" />
-      <input type="text" id="bpl" placeholder="BPL Number" />
-      <input type="text" id="abha" placeholder="ABHA Number (optional)" />
-      <input type="text" id="esi" placeholder="ESI Number (optional)" />
-      <input type="text" id="vajpayee" placeholder="Vajpayee Arogyashree Yojana Account (optional)" />
-    </div>
-    <button id="registerBtn">Register</button>
-  </div>
+    </label>
 
-  <footer>
-    &copy; 2025 Human Care · A HomosaP Healthcare Initiative
-  </footer>
+    <label>Phone Number
+      <input type="tel" id="phoneNumber" required placeholder="+91xxxxxxxxxx" />
+    </label>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
+    <label>Emergency Contact Number
+      <input type="tel" id="emergencyContact" required />
+    </label>
 
-   <script>
+    <label class="full-width">Email
+      <input type="email" id="email" required />
+    </label>
+
+    <label class="full-width">Address
+      <input type="text" id="address" required />
+    </label>
+
+    <label>Blood Group
+      <input type="text" id="bloodGroup" />
+    </label>
+
+    <label>Caste
+      <input type="text" id="caste" />
+    </label>
+
+    <label>Education
+      <input type="text" id="education" />
+    </label>
+
+    <label>Mother Tongue
+      <input type="text" id="motherTongue" />
+    </label>
+
+    <label>Occupation
+      <input type="text" id="occupation" />
+    </label>
+
+    <label class="full-width">Aadhaar Number
+      <input type="text" id="aadhaar" required />
+    </label>
+
+    <label>Family Income
+      <input type="text" id="income" />
+    </label>
+
+    <label>BPL Number
+      <input type="text" id="bpl" />
+    </label>
+
+    <label>ABHA Number (optional)
+      <input type="text" id="abha" />
+    </label>
+
+    <label>ESI Number (optional)
+      <input type="text" id="esi" />
+    </label>
+
+    <label class="full-width">Vajpayee Arogyashree Yojana Account Number (optional)
+      <input type="text" id="vajpayee" />
+    </label>
+
+    <button type="submit">Register</button>
+  </form>
+</div>
+
+<footer>All data is confidential & encrypted under Human Care</footer>
+
+<div id="recaptcha-container"></div>
+
+ <script>
     // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
@@ -154,55 +215,34 @@
       appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  document.getElementById("registerForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const phone = document.getElementById("phoneNumber").value;
+
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      size: 'invisible',
+      callback: function(response) {
+        sendOTP();
+      }
+    });
 
     function sendOTP() {
-      const phone = document.getElementById("phone").value;
-
-      const data = {
-        fullName: document.getElementById("fullName").value,
-        dob: document.getElementById("dob").value,
-        gender: document.getElementById("gender").value,
-        phone,
-        emergencyContact: document.getElementById("emergency").value,
-        email: document.getElementById("email").value,
-        address: document.getElementById("address").value,
-        bloodGroup: document.getElementById("bloodGroup").value,
-        caste: document.getElementById("caste").value,
-        education: document.getElementById("education").value,
-        motherTongue: document.getElementById("motherTongue").value,
-        occupation: document.getElementById("occupation").value,
-        aadhaar: document.getElementById("aadhaar").value,
-        income: document.getElementById("income").value,
-        bpl: document.getElementById("bpl").value,
-        abha: document.getElementById("abha").value,
-        esi: document.getElementById("esi").value,
-        vajpayee: document.getElementById("vajpayee").value
-      };
-
-      if (!phone || phone.length < 10) return alert("Enter a valid phone number");
-
-      localStorage.setItem("registrationData", JSON.stringify(data));
-
-      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('registerBtn', {
-        size: 'invisible'
-      });
-
-      auth.signInWithPhoneNumber("+91" + phone, window.recaptchaVerifier)
+      auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
         .then((confirmationResult) => {
-          window.confirmationResult = confirmationResult;
-          window.location.href = "verification.html";
+          sessionStorage.setItem('registrationForm', JSON.stringify(Object.fromEntries(new FormData(document.getElementById('registerForm')))));
+          sessionStorage.setItem('confirmationResult', JSON.stringify(confirmationResult));
+          window.location.href = 'verification.html';
         })
         .catch((error) => {
-          alert("OTP Failed: " + error.message);
+          alert("Error: " + error.message);
         });
     }
 
-    document.getElementById("registerBtn").addEventListener("click", (e) => {
-      e.preventDefault();
-      sendOTP();
-    });
-  </script>
+    sendOTP();
+  });
+</script>
 </body>
 </html>
