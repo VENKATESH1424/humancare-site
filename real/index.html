@@ -12,12 +12,12 @@
 <body>
   <header class="header">
     <div class="logo-container">
-      <img src="human-logo.png" alt="Human Care Logo" />
+      <img src="asset/human-logo.png" alt="Human Care Logo" />
       <div class="title">Human Care</div>
       <div class="tagline">Serving life, not illness</div>
     </div>
     <div class="homosap-logo">
-      <img src="homosap-logo.png" alt="HomosaP Logo" style="height: 150px;" />
+      <img src="asset/homosap-logo.png" alt="HomosaP Logo" style="height: 150px;" />
     </div>
   </header>
 
@@ -31,7 +31,7 @@
       </div>
     </div>
     <div class="hero-image">
-      <img src="hero-image.png" alt="Healthcare Illustration" />
+      <img src="asset/hero-image.png" alt="Healthcare Illustration" />
     </div>
   </main>
 
@@ -57,14 +57,41 @@
     </div>
   </section>
 
-  <section id="how-it-works">
+ <section id="how-it-works">
     <h2>How It Works</h2>
-    <div class="slide active">Registration process</div>
-    <div class="slide">Profile setup</div>
-    <div class="slide">Upload medical records</div>
-    <div class="slide">Doctor consultation</div>
-    <div class="slide">Pharmacy collaboration</div>
-    <div class="slide">Lab integration</div>
+    <div class="slide active">
+      <i class="fas fa-user-plus" style="font-size: 48px; color: #3a7bfd;"></i>
+      <p>Quick Registration to enter your health world</p>
+    </div>
+    <div class="slide">
+      <i class="fas fa-id-badge" style="font-size: 48px; color: #55b99d;"></i>
+      <p>Create your Human profile linked to your Human Number</p>
+    </div>
+    <div class="slide">
+      <i class="fas fa-file-medical" style="font-size: 48px; color: #f59e0b;"></i>
+      <p>Upload your medical reports securely and access anytime</p>
+    </div>
+    <div class="slide">
+      <i class="fas fa-user-md" style="font-size: 48px; color: #9c27b0;"></i>
+      <p>Doctors review and prescribe directly through the system</p>
+    </div>
+    <div class="slide">
+      <i class="fas fa-pills" style="font-size: 48px; color: #f43f5e;"></i>
+      <p>Pharmacy views prescription and fulfills your medicines</p>
+    </div>
+    <div class="slide">
+      <i class="fas fa-vial" style="font-size: 48px; color: #0ea5e9;"></i>
+      <p>Labs upload test results tagged to your Human profile</p>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <span class="dot active" onclick="showSlide(0)"></span>
+      <span class="dot" onclick="showSlide(1)"></span>
+      <span class="dot" onclick="showSlide(2)"></span>
+      <span class="dot" onclick="showSlide(3)"></span>
+      <span class="dot" onclick="showSlide(4)"></span>
+      <span class="dot" onclick="showSlide(5)"></span>
+    </div>
   </section>
 
   <footer class="footer">
