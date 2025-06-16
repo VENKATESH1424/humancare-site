@@ -2,47 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register | Human Care</title>
-  <link rel="stylesheet" href="styles/human-register.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register as a Human - Human Care</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 </head>
 <body>
-  <div class="bg-animation">
-    <img src="assets/floating-pill.png" class="floating pill" />
-    <img src="assets/floating-stethoscope.png" class="floating stethoscope" />
-    <img src="assets/floating-syringe.png" class="floating syringe" />
-  </div>
-
-  <div class="register-container">
+  <div class="form-container">
     <h2>Become a Human</h2>
-    <form id="register-form">
-      <input type="text" id="name" placeholder="Full Name" required />
-      
-      <select id="state" required>
-        <option value="">Select State</option>
-        <option value="KA">Karnataka</option>
-        <option value="MH">Maharashtra</option>
-        <option value="TN">Tamil Nadu</option>
-        <!-- Add more states as needed -->
+    <form id="registerForm">
+      <input type="text" id="fullName" placeholder="Full Name" required />
+      <input type="date" id="dob" placeholder="Date of Birth" required />
+      <select id="gender" required>
+        <option value="">Select Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
       </select>
-
       <input type="tel" id="phone" placeholder="Phone Number" required />
+      <input type="tel" id="emergencyContact" placeholder="Emergency Contact Number" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="text" id="address" placeholder="Address" required />
+      <input type="text" id="bloodGroup" placeholder="Blood Group" required />
+      <input type="text" id="caste" placeholder="Caste" required />
+      <input type="text" id="education" placeholder="Education" required />
+      <input type="text" id="motherTongue" placeholder="Mother Tongue" required />
+      <input type="text" id="occupation" placeholder="Occupation" required />
+      <input type="text" id="aadhaar" placeholder="Aadhaar Number" required />
+      <input type="text" id="income" placeholder="Family Income" required />
+      <input type="text" id="bpl" placeholder="BPL Number" required />
+      <input type="text" id="abha" placeholder="ABHA Number (optional)" />
+      <input type="text" id="esi" placeholder="ESI Number (optional)" />
+      <input type="text" id="vajpayee" placeholder="Vajpayee Arogyashree Yojana Number (optional)" />
+
       <div id="recaptcha-container"></div>
-
-      <button type="button" onclick="sendOTP()">Send OTP</button>
-      <input type="text" id="otp" placeholder="Enter OTP" />
-
-      <input type="password" id="password" placeholder="Create Password" required />
-
-      <button type="submit">Register</button>
-      <p>Already a Human? <a href="human-login.html">Login</a></p>
+      <button type="submit">Send OTP</button>
     </form>
   </div>
 
-  <script type="module" src="scripts/human-register.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_BUCKET",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    window.onload = () => {
+      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        size: 'invisible',
+        callback: () => document.getElementById("registerForm").dispatchEvent(new Event("submit")),
+      });
+    };
+
+    document.getElementById("registerForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const userData = {
+        fullName: document.getElementById("fullName").value,
+        dob: document.getElementById("dob").value,
+        gender: document.getElementById("gender").value,
+        phone: document.getElementById("phone").value,
+        emergencyContact: document.getElementById("emergencyContact").value,
+        email: document.getElementById("email").value,
+        address: document.getElementById("address").value,
+        bloodGroup: document.getElementById("bloodGroup").value,
+        caste: document.getElementById("caste").value,
+        education: document.getElementById("education").value,
+        motherTongue: document.getElementById("motherTongue").value,
+        occupation: document.getElementById("occupation").value,
+        aadhaar: document.getElementById("aadhaar").value,
+        income: document.getElementById("income").value,
+        bpl: document.getElementById("bpl").value,
+        abha: document.getElementById("abha").value || "",
+        esi: document.getElementById("esi").value || "",
+        vajpayee: document.getElementById("vajpayee").value || ""
+      };
+
+      const phoneNumber = "+91" + userData.phone;
+      const appVerifier = window.recaptchaVerifier;
+
+      auth.signInWithPhoneNumber(phoneNumber, appVerifier)
+        .then((confirmationResult) => {
+          sessionStorage.setItem("verificationId", confirmationResult.verificationId);
+          sessionStorage.setItem("humanData", JSON.stringify(userData));
+          alert("OTP Sent. Proceeding to verification...");
+          window.location.href = "verification.html";
+        })
+        .catch((error) => {
+          alert("OTP Error: " + error.message);
+        });
+    });
+  </script>
 </body>
 </html>
