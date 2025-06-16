@@ -2,29 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Verify OTP | Human Registration</title>
-  <link rel="stylesheet" href="styles.css"/>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify OTP - Human Care</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h2>Verify Your Phone Number</h2>
-    
+  <div class="form-container">
+    <h2>Verify Your OTP</h2>
     <div id="otp-section">
       <input type="text" id="otp" placeholder="Enter OTP" />
       <button onclick="verifyOTP()">Verify OTP</button>
     </div>
 
-    <div id="password-section" style="display:none;">
-      <input type="password" id="password" placeholder="Create Password" />
+    <div id="password-section" style="display: none;">
+      <input type="password" id="newPassword" placeholder="New Password" />
       <input type="password" id="confirmPassword" placeholder="Confirm Password" />
       <button onclick="completeRegistration()">Complete Registration</button>
     </div>
-
-    <div id="recaptcha-container"></div>
   </div>
 
   <script>
@@ -38,63 +35,55 @@
     };
 
     firebase.initializeApp(firebaseConfig);
-
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // Retrieve phone number from session and trigger OTP
-    const phoneNumber = sessionStorage.getItem('phoneNumber');
-    const stateCode = sessionStorage.getItem('stateCode'); // Set this during registration
-    const appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
-
-    auth.signInWithPhoneNumber(phoneNumber, appVerifier)
-      .then(confirmationResult => {
-        window.confirmationResult = confirmationResult;
-      }).catch(error => {
-        alert("Error sending OTP: " + error.message);
-      });
+    let verificationId = sessionStorage.getItem('verificationId');
+    let userData = JSON.parse(sessionStorage.getItem('humanData')) || {};
 
     function verifyOTP() {
       const code = document.getElementById("otp").value;
-      confirmationResult.confirm(code).then(result => {
-        document.getElementById("otp-section").style.display = "none";
-        document.getElementById("password-section").style.display = "block";
-      }).catch(error => {
-        alert("Incorrect OTP");
-      });
+      const cred = firebase.auth.PhoneAuthProvider.credential(verificationId, code);
+      auth.signInWithCredential(cred)
+        .then(() => {
+          document.getElementById("otp-section").style.display = "none";
+          document.getElementById("password-section").style.display = "block";
+        })
+        .catch((error) => {
+          alert("OTP verification failed: " + error.message);
+        });
     }
 
-    function generateHumanNumber(stateCode) {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let random = '';
+    function generateHumanNumber(stateCode = "KA") {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let suffix = "";
       for (let i = 0; i < 6; i++) {
-        random += chars.charAt(Math.floor(Math.random() * chars.length));
+        suffix += chars[Math.floor(Math.random() * chars.length)];
       }
-      return `HN-${stateCode}-${random}`;
+      return `HN-${stateCode}-${suffix}`;
     }
 
     function completeRegistration() {
-      const password = document.getElementById("password").value;
+      const password = document.getElementById("newPassword").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
 
       if (password !== confirmPassword) {
-        alert("Passwords do not match");
+        alert("Passwords do not match!");
         return;
       }
 
-      const humanNumber = generateHumanNumber(stateCode || 'KA');
-      const userData = JSON.parse(sessionStorage.getItem('registrationData'));
+      const humanNumber = generateHumanNumber();
       userData.humanNumber = humanNumber;
       userData.password = password;
-      userData.phone = phoneNumber;
 
-      // Store in Firebase Realtime DB
-      db.ref('humans/' + humanNumber).set(userData).then(() => {
-        alert("Registration successful! Your Human Number is: " + humanNumber);
-        window.location.href = "human-login.html";
-      }).catch(error => {
-        alert("Error saving data: " + error.message);
-      });
+      db.ref("humans/" + humanNumber).set(userData)
+        .then(() => {
+          alert("Registration completed! Your Human Number is " + humanNumber);
+          window.location.href = "human-login.html";
+        })
+        .catch((error) => {
+          alert("Error storing data: " + error.message);
+        });
     }
   </script>
 </body>
