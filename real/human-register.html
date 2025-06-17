@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Become a Human</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
@@ -15,41 +15,53 @@
       margin: 0;
       padding: 0;
       background: linear-gradient(to bottom right, #e0f7fa, #fce4ec);
-      overflow-x: hidden;
       animation: fadeIn 1s ease-in;
+      overflow-x: hidden;
     }
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
     .container {
-      max-width: 1100px;
+      max-width: 1000px;
       margin: 60px auto;
       background: white;
       padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
       position: relative;
       z-index: 2;
     }
     h2 {
       text-align: center;
-      margin-bottom: 30px;
       color: #2c3e50;
+      margin-bottom: 30px;
     }
     form {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-wrap: wrap;
       gap: 20px;
     }
-    input, select {
-      padding: 12px;
+    .form-group {
+      flex: 1 1 45%;
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group.full {
+      flex: 1 1 100%;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    input, textarea {
+      padding: 10px;
       border: 1px solid #ccc;
       border-radius: 10px;
       font-size: 14px;
     }
     button {
-      grid-column: span 2;
+      width: 100%;
       padding: 12px;
       background: #00796b;
       color: white;
@@ -59,15 +71,8 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    button:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
-    .background-icons i {
-      position: absolute;
-      font-size: 30px;
-      color: rgba(0,0,0,0.1);
-      animation: float 6s infinite ease-in-out;
+    #recaptcha-container {
+      margin-top: 15px;
     }
     .background-icons {
       position: fixed;
@@ -76,20 +81,23 @@
       width: 100%;
       height: 100%;
       z-index: 0;
-      overflow: hidden;
       pointer-events: none;
+      overflow: hidden;
+    }
+    .background-icons i {
+      position: absolute;
+      font-size: 30px;
+      color: rgba(0, 0, 0, 0.1);
+      animation: float 6s infinite ease-in-out;
     }
     @keyframes float {
       0% { transform: translateY(0); }
       50% { transform: translateY(-30px); }
       100% { transform: translateY(0); }
     }
-    @media(max-width: 768px) {
-      form {
-        grid-template-columns: 1fr;
-      }
-      button {
-        grid-column: span 1;
+    @media (max-width: 768px) {
+      .form-group {
+        flex: 1 1 100%;
       }
     }
   </style>
@@ -106,75 +114,71 @@
   <div class="container">
     <h2>Become a Human</h2>
     <form id="registerForm">
-      <input type="text" name="fullName" id="fullName" placeholder="Full Name" required>
-      <input type="date" name="dob" id="dob" placeholder="Date of Birth" required>
-      <select name="gender" id="gender" required>
-        <option value="">Select Gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Other">Other</option>
-      </select>
-      <input type="tel" name="phone" id="phone" placeholder="Phone Number" required>
-      <input type="tel" name="emergency" id="emergency" placeholder="Emergency Contact Number" required>
-      <input type="email" name="email" id="email" placeholder="Email" required>
-      <input type="text" name="address" id="address" placeholder="Address" required>
-      <input type="text" name="blood" id="blood" placeholder="Blood Group" required>
-      <input type="text" name="caste" id="caste" placeholder="Caste" required>
-      <input type="text" name="education" id="education" placeholder="Education" required>
-      <input type="text" name="language" id="language" placeholder="Mother Tongue" required>
-      <input type="text" name="occupation" id="occupation" placeholder="Occupation" required>
-      <input type="text" name="aadhaar" id="aadhaar" placeholder="Aadhaar Number" required>
-      <input type="number" name="income" id="income" placeholder="Family Income" required>
-      <input type="text" name="bpl" id="bpl" placeholder="BPL Number" required>
-      <input type="text" name="abha" id="abha" placeholder="ABHA Number (optional)">
-      <input type="text" name="esi" id="esi" placeholder="ESI Number (optional)">
-      <input type="text" name="vajpayee" id="vajpayee" placeholder="Vajpayee Arogyashree Yojana Account Number (optional)">
+      <div class="form-group"><label>Full Name</label><input name="fullName" required /></div>
+      <div class="form-group"><label>Date of Birth</label><input type="date" name="dob" required /></div>
+      <div class="form-group"><label>Gender</label><input name="gender" required /></div>
+      <div class="form-group"><label>Phone Number</label><input name="phone" required /></div>
+      <div class="form-group"><label>Emergency Contact</label><input name="emergencyContact" required /></div>
+      <div class="form-group"><label>Email</label><input name="email" required /></div>
+      <div class="form-group full"><label>Address</label><textarea name="address" rows="2" required></textarea></div>
+      <div class="form-group"><label>Blood Group</label><input name="bloodGroup" required /></div>
+      <div class="form-group"><label>Caste</label><input name="caste" required /></div>
+      <div class="form-group"><label>Education</label><input name="education" required /></div>
+      <div class="form-group"><label>Mother Tongue</label><input name="motherTongue" required /></div>
+      <div class="form-group"><label>Occupation</label><input name="occupation" required /></div>
+      <div class="form-group"><label>Aadhaar Number</label><input name="aadhaar" required /></div>
+      <div class="form-group"><label>Family Income</label><input name="income" required /></div>
+      <div class="form-group"><label>BPL Number</label><input name="bpl" required /></div>
+      <div class="form-group"><label>ABHA Number (optional)</label><input name="abha" /></div>
+      <div class="form-group"><label>ESI Number (optional)</label><input name="esi" /></div>
+      <div class="form-group"><label>VAY Yojana No. (optional)</label><input name="vajpayee" /></div>
       <div id="recaptcha-container"></div>
-      <button type="button" id="registerBtn" disabled>Send OTP</button>
+      <div class="form-group full"><button type="button" onclick="sendOTP()">Send OTP</button></div>
     </form>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
       authDomain: "humancare-web1.firebaseapp.com",
       projectId: "humancare-web1",
-      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com/",
       appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
     };
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    let confirmationResult;
 
-    const phoneInput = document.getElementById('phone');
-    const registerBtn = document.getElementById('registerBtn');
-    const form = document.getElementById('registerForm');
-
-    form.addEventListener('input', () => {
-      const requiredFields = form.querySelectorAll('[required]');
-      const allFilled = Array.from(requiredFields).every(input => input.value.trim() !== '');
-      registerBtn.disabled = !allFilled;
-    });
-
-    registerBtn.addEventListener('click', () => {
-      const phoneNumber = "+91" + phoneInput.value.trim();
-      const appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { size: 'invisible' });
-      appVerifier.render().then(() => {
-        auth.signInWithPhoneNumber(phoneNumber, appVerifier)
-          .then(confirmationResult => {
-            sessionStorage.setItem('confirmationResult', JSON.stringify(confirmationResult));
-            const formData = {};
-            new FormData(form).forEach((value, key) => formData[key] = value);
-            sessionStorage.setItem('humanFormData', JSON.stringify(formData));
-            window.location.href = "verification.html";
-          })
-          .catch(error => {
-            alert("Error sending OTP: " + error.message);
-          });
+    window.onload = () => {
+      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        'size': 'normal',
+        'callback': () => {
+          console.log('reCAPTCHA resolved');
+        }
       });
-    });
+      recaptchaVerifier.render();
+    };
+
+    function sendOTP() {
+      const phone = document.querySelector('[name="phone"]').value.trim();
+      if (!phone) return alert("Phone number is required");
+
+      const fullForm = document.getElementById("registerForm");
+      const formData = new FormData(fullForm);
+      const dataObject = {};
+      formData.forEach((v, k) => dataObject[k] = v);
+      sessionStorage.setItem("humanFormData", JSON.stringify(dataObject));
+
+      auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
+        .then(result => {
+          sessionStorage.setItem("confirmationResult", JSON.stringify(result));
+          window.location.href = "verification.html";
+        })
+        .catch(e => alert("OTP Error: " + e.message));
+    }
   </script>
 </body>
 </html>
