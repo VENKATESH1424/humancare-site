@@ -1,166 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>OTP Verification</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
     body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(to bottom right, #e0f7fa, #fce4ec);
-      animation: fadeIn 1s ease-in;
-      overflow-x: hidden;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 2rem;
     }
     .container {
       max-width: 500px;
-      margin: 80px auto;
+      margin: 0 auto;
       background: white;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      position: relative;
-      z-index: 2;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
     h2 {
       text-align: center;
-      color: #2c3e50;
-      margin-bottom: 20px;
     }
     input {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
       border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 14px;
+      border-radius: 8px;
     }
     button {
       width: 100%;
-      padding: 12px;
-      background: #00796b;
+      padding: 1rem;
+      background-color: #007bff;
       color: white;
       border: none;
-      border-radius: 10px;
-      font-size: 16px;
+      border-radius: 8px;
+      font-size: 1rem;
       cursor: pointer;
-      transition: 0.3s;
     }
-    .background-icons i {
-      position: absolute;
-      font-size: 30px;
-      color: rgba(0, 0, 0, 0.1);
-      animation: float 6s infinite ease-in-out;
-    }
-    .background-icons {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-30px); }
-      100% { transform: translateY(0); }
+    button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
-  <div class="background-icons">
-    <i class="fas fa-pills" style="left:10%; animation-delay: 0s;"></i>
-    <i class="fas fa-stethoscope" style="left:30%; animation-delay: 2s;"></i>
-    <i class="fas fa-syringe" style="left:50%; animation-delay: 4s;"></i>
-    <i class="fas fa-heartbeat" style="left:70%; animation-delay: 1s;"></i>
-    <i class="fas fa-notes-medical" style="left:90%; animation-delay: 3s;"></i>
-  </div>
-
   <div class="container">
-    <h2>OTP Verification</h2>
+    <h2>Verify OTP & Set Password</h2>
     <input type="text" id="otp" placeholder="Enter OTP" required />
-    <input type="password" id="newPassword" placeholder="Create Password" required />
+    <input type="password" id="password" placeholder="New Password" required />
     <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
     <button onclick="verifyOTP()">Verify & Register</button>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
       authDomain: "humancare-web1.firebaseapp.com",
-      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com/",
+      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com",
       projectId: "humancare-web1",
-      appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
+      storageBucket: "humancare-web1.appspot.com",
+      messagingSenderId: "156578165275",
+      appId: "1:156578165275:web:e962a6aa4a1c7a503e2c2a"
     };
-
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.database();
 
-    function generateHumanNumber(stateCode) {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let result = '';
-      for (let i = 0; i < 6; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-      }
-      return `HN-${stateCode}-${result}`;
-    }
-
-    function verifyOTP() {
-      const code = document.getElementById("otp").value.trim();
-      const newPassword = document.getElementById("newPassword").value;
+    async function verifyOTP() {
+      const otp = document.getElementById("otp").value;
+      const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
 
-      if (newPassword !== confirmPassword) {
+      if (password !== confirmPassword) {
         alert("Passwords do not match.");
         return;
       }
 
-      const confirmationResult = JSON.parse(sessionStorage.getItem("confirmationResult"));
+      const confirmationResult = window.confirmationResult || JSON.parse(sessionStorage.getItem("confirmationResult"));
       if (!confirmationResult) {
         alert("OTP session expired. Please register again.");
         window.location.href = "human-register.html";
         return;
       }
 
-      confirmationResult.confirm(code).then(result => {
+      try {
+        const result = await confirmationResult.confirm(otp);
         const user = result.user;
+
         const formData = JSON.parse(sessionStorage.getItem("humanFormData"));
         if (!formData) {
-          alert("No registration data found.");
+          alert("Form data not found. Please register again.");
+          window.location.href = "human-register.html";
           return;
         }
 
-        const stateCode = "KA"; // Later replace with dynamic state extraction logic
-        const humanNumber = generateHumanNumber(stateCode);
+        // Generate Human Number
+        const stateCode = "KA"; // You can change this based on state selection
+        const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase() + Math.floor(Math.random() * 1000);
+        const humanNumber = `HN-${stateCode}-${randomPart}`;
 
-        db.ref(`humans/${humanNumber}`).set({
-          ...formData,
-          humanNumber,
-          phone: user.phoneNumber,
-          password: newPassword
-        }).then(() => {
-          alert("Registered successfully! Your Human Number is " + humanNumber);
-          window.location.href = "human-login.html";
-        });
-      }).catch(error => {
-        alert("OTP verification failed: " + error.message);
-      });
+        // Add human number and password to form data
+        formData.humanNumber = humanNumber;
+        formData.password = password;
+
+        // Save to Firebase Realtime DB
+        await firebase.database().ref('humans/' + humanNumber).set(formData);
+
+        alert("Registration successful. Your Human Number is: " + humanNumber);
+        sessionStorage.clear();
+        window.location.href = "human-login.html";
+      } catch (error) {
+        console.error("OTP verification failed:", error);
+        alert("Invalid OTP or error occurred: " + error.message);
+      }
     }
   </script>
 </body>
