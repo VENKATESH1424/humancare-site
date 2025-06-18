@@ -207,7 +207,10 @@
           db.ref(`humans/${humanNumber}`).set({ ...formData, humanNumber })
             .then(() => {
               alert("Registration successful! Your Human Number is " + humanNumber);
-              window.location.href = "human-login.html";
+              localStorage.setItem('humanName', formData.fullName);
+               localStorage.setItem('humanNumber', humanNumber);
+                window.location.href = "registration-success.html";
+
             });
         })
         .catch(error => alert("OTP verification failed: " + error.message));
