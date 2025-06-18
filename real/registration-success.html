@@ -3,87 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Welcome to Human Care</title>
+  <title>Registration Successful</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <style>
     body {
-      font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
-      background: #f0f4f8;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background: #f4f8fb;
+      overflow-x: hidden;
     }
-    .card {
+
+    .background-icons i {
+      position: absolute;
+      font-size: 2.5rem;
+      color: rgba(0, 122, 255, 0.08);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 10vh auto;
       background: white;
       padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
       text-align: center;
-      max-width: 400px;
-      width: 90%;
-      animation: fadeIn 1s ease-in-out;
+      border-radius: 16px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1s ease-out;
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .success-icon {
+      font-size: 3rem;
+      color: #00c851;
+      margin-bottom: 1rem;
+    }
+
     h2 {
-      color: #0052cc;
+      color: #0a2e52;
       margin-bottom: 0.5rem;
     }
+
     p {
       font-size: 1rem;
-      margin-bottom: 1rem;
-      color: #333;
+      color: #555;
+      margin-bottom: 1.2rem;
     }
-    .human-number {
-      font-weight: bold;
-      font-size: 1.1rem;
-      color: #0a2e52;
-      background: #e9f2ff;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      display: inline-block;
+
+    .human-info {
+      background: #e6f4ff;
+      padding: 1rem;
+      border-radius: 12px;
+      font-weight: 600;
+      color: #004a99;
+      margin-bottom: 1.5rem;
     }
-    button {
+
+    .button {
       padding: 0.75rem 1.5rem;
       background-color: #0052cc;
       color: white;
       border: none;
       border-radius: 8px;
       font-size: 1rem;
-      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
     }
-    button:hover {
-      background-color: #003d99;
+
+    .button:hover {
+      background-color: #003e99;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+
+    /* Background floating icons */
+    .background-icons i:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+    .background-icons i:nth-child(2) { top: 20%; left: 30%; animation-delay: 1.5s; }
+    .background-icons i:nth-child(3) { top: 15%; left: 60%; animation-delay: 3s; }
+    .background-icons i:nth-child(4) { top: 25%; left: 80%; animation-delay: 2s; }
+    .background-icons i:nth-child(5) { top: 5%;  left: 90%; animation-delay: 2.5s; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Welcome, <span id="humanName">Human</span>!</h2>
-    <p>You have successfully registered.</p>
-    <div>Your Human Number:</div>
-    <div class="human-number" id="humanNumber">HN-XX-XXXXXX</div>
-    <p>Keep this number safe. It will be used for all future care.</p>
-    <button onclick="goToLogin()">Proceed to Login</button>
+  <div class="background-icons">
+    <i class="fas fa-pills"></i>
+    <i class="fas fa-stethoscope"></i>
+    <i class="fas fa-syringe"></i>
+    <i class="fas fa-heartbeat"></i>
+    <i class="fas fa-notes-medical"></i>
+  </div>
+
+  <div class="container">
+    <div class="success-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <h2>Registration Successful!</h2>
+    <p>Welcome to Human Care — where every Human matters.</p>
+    <div class="human-info">
+      <div id="humanName"></div>
+      <div id="humanNumber"></div>
+    </div>
+    <a href="human-login.html" class="button">Go to Login</a>
   </div>
 
   <script>
-    const name = localStorage.getItem('humanName') || 'Human';
-    const humanNumber = localStorage.getItem('humanNumber') || 'HN-XX-XXXXXX';
-    document.getElementById('humanName').textContent = name;
-    document.getElementById('humanNumber').textContent = humanNumber;
-
-    function goToLogin() {
-      localStorage.removeItem('humanName');
-      localStorage.removeItem('humanNumber');
-      window.location.href = "human-login.html";
-    }
+    // Display name and number from localStorage
+    document.getElementById('humanName').innerText = "👤 " + localStorage.getItem("humanName");
+    document.getElementById('humanNumber').innerText = "🧾 " + localStorage.getItem("humanNumber");
   </script>
 </body>
 </html>
