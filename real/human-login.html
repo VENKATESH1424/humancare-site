@@ -155,11 +155,25 @@
       <img src="assets/human-logo.png" alt="Human Logo" />
       <h2>Human</h2>
       <form id="loginForm">
-        <div class="human-number-group">
-          <input type="text" value="HN-" readonly class="prefix" style="width: 40px;" />
-          <input type="text" value="KA" readonly class="state" style="width: 30px;" />
-          <span style="font-weight: bold;">-</span>
-          <input type="text" id="suffix" maxlength="6" placeholder="XXXXXX" required class="editable-suffix" />
+       <div class="human-number-group">
+  <input type="text" value="HN-" readonly class="prefix" style="width: 40px;" />
+  <select id="stateCode" required style="padding: 10px; border-radius: 8px; font-weight: bold;">
+    <option value="KA">KA</option>
+    <option value="MH">MH</option>
+    <option value="TN">TN</option>
+    <option value="DL">DL</option>
+    <option value="GJ">GJ</option>
+    <option value="UP">UP</option>
+    <option value="RJ">RJ</option>
+    <option value="KL">KL</option>
+    <option value="WB">WB</option>
+    <option value="AP">AP</option>
+    <!-- Add more as needed -->
+  </select>
+  <span style="font-weight: bold;">-</span>
+  <input type="text" id="suffix" maxlength="6" placeholder="XXXXXX" required class="editable-suffix" />
+</div>
+
         </div>
         <input type="password" id="password" placeholder="Password" required />
         <div class="forgot">
@@ -191,7 +205,7 @@
 
       const suffix = document.getElementById("suffix").value.toUpperCase();
       const password = document.getElementById("password").value;
-      const humanNumber = `HN-KA-${suffix}`;
+      const stateCode = document.getElementById("stateCode").value; const humanNumber = `HN-${stateCode}-${suffix}`;
 
       db.ref("humans/" + humanNumber).once("value")
         .then(snapshot => {
