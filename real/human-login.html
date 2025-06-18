@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - Human Care</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   <style>
     body {
       margin: 0;
@@ -75,12 +77,6 @@
       font-size: 14px;
     }
 
-    .email-display {
-      font-size: 14px;
-      color: #0077cc;
-      margin-bottom: 10px;
-    }
-
     .forgot {
       text-align: right;
       margin-bottom: 16px;
@@ -119,6 +115,30 @@
       margin-top: 20px;
       z-index: 2;
     }
+
+    .human-number-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .human-number-group input[type="text"] {
+      margin-bottom: 0;
+      text-align: center;
+    }
+
+    .prefix, .state {
+      border: none;
+      background: none;
+      font-weight: bold;
+      font-size: 14px;
+      padding: 10px 0;
+    }
+
+    .editable-suffix {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
@@ -135,8 +155,12 @@
       <img src="assets/human-logo.png" alt="Human Logo" />
       <h2>Human</h2>
       <form id="loginForm">
-        <input type="text" id="humanNumber" placeholder="Enter your Human Number" required />
-        <div class="email-display" id="linkedEmail"></div>
+        <div class="human-number-group">
+          <input type="text" value="HN-" readonly class="prefix" style="width: 40px;" />
+          <input type="text" value="KA" readonly class="state" style="width: 30px;" />
+          <span style="font-weight: bold;">-</span>
+          <input type="text" id="suffix" maxlength="6" placeholder="XXXXXX" required class="editable-suffix" />
+        </div>
         <input type="password" id="password" placeholder="Password" required />
         <div class="forgot">
           <a href="#">Forgot Password?</a>
@@ -150,9 +174,6 @@
     <footer>© 2025 HomosaP Healthcare Pvt Ltd. All rights reserved.</footer>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
@@ -165,59 +186,30 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const humanInput = document.getElementById("humanNumber");
-    const linkedEmail = document.getElementById("linkedEmail");
-    const form = document.getElementById("loginForm");
-
-    humanInput.addEventListener("blur", () => {
-      const humanNumber = humanInput.value.trim();
-      if (!humanNumber) {
-        linkedEmail.innerText = "";
-        return;
-      }
-
-      db.ref(`humans/${humanNumber}`).get().then(snapshot => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          linkedEmail.innerText = "Email: " + data.email;
-        } else {
-          linkedEmail.innerText = "No such Human found.";
-        }
-      }).catch(() => {
-        linkedEmail.innerText = "Error retrieving data.";
-      });
-    });
-
-    form.addEventListener("submit", (e) => {
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
-      const humanNumber = humanInput.value.trim();
+      const suffix = document.getElementById("suffix").value.toUpperCase();
       const password = document.getElementById("password").value;
+      const humanNumber = `HN-KA-${suffix}`;
 
-      if (!humanNumber || !password) {
-        alert("Please fill in all fields.");
-        return;
-      }
-
-      db.ref(`humans/${humanNumber}`).get().then(snapshot => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-
-          if (data.password === password) {
-            localStorage.setItem("humanName", data.fullName);
-            localStorage.setItem("humanNumber", humanNumber);
-            localStorage.setItem("humanEmail", data.email);
-            window.location.href = "dashboard.html"; // Replace with actual dashboard
-          } else {
+      db.ref("humans/" + humanNumber).once("value")
+        .then(snapshot => {
+          const userData = snapshot.val();
+          if (!userData) {
+            alert("Human Number not found.");
+          } else if (userData.password !== password) {
             alert("Incorrect password.");
+          } else {
+            localStorage.setItem("humanNumber", humanNumber);
+            localStorage.setItem("humanName", userData.fullName);
+            window.location.href = "dashboard.html"; // update if you use a different dashboard page
           }
-        } else {
-          alert("Human Number not found.");
-        }
-      }).catch(error => {
-        console.error(error);
-        alert("Login failed. Please try again.");
-      });
+        })
+        .catch(error => {
+          console.error(error);
+          alert("Error retrieving data");
+        });
     });
   </script>
 </body>
