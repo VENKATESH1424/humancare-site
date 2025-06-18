@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - Human Care</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   <style>
     body {
       margin: 0;
@@ -22,13 +20,12 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
-      overflow: hidden;
     }
 
     .icon {
       position: absolute;
       font-size: 24px;
-      color: rgba(0, 0, 0, 0.1);
+      color: rgba(0, 0, 0, 0.07);
       animation: float 10s infinite linear;
     }
 
@@ -68,7 +65,33 @@
       color: #3a3a3a;
     }
 
-    input[type="text"], input[type="password"] {
+    .human-number-group {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .human-number-group span,
+    .human-number-group select,
+    .human-number-group input[type="text"] {
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      height: 40px;
+    }
+
+    .human-number-group span {
+      background-color: #f3f3f3;
+      display: flex;
+      align-items: center;
+    }
+
+    select {
+      appearance: none;
+    }
+
+    input[type="password"] {
       width: 100%;
       padding: 12px;
       margin-bottom: 12px;
@@ -115,30 +138,6 @@
       margin-top: 20px;
       z-index: 2;
     }
-
-    .human-number-group {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .human-number-group input[type="text"] {
-      margin-bottom: 0;
-      text-align: center;
-    }
-
-    .prefix, .state {
-      border: none;
-      background: none;
-      font-weight: bold;
-      font-size: 14px;
-      padding: 10px 0;
-    }
-
-    .editable-suffix {
-      flex: 1;
-    }
   </style>
 </head>
 <body>
@@ -155,25 +154,18 @@
       <img src="assets/human-logo.png" alt="Human Logo" />
       <h2>Human</h2>
       <form id="loginForm">
-       <div class="human-number-group">
-  <input type="text" value="HN-" readonly class="prefix" style="width: 40px;" />
-  <select id="stateCode" required style="padding: 10px; border-radius: 8px; font-weight: bold;">
-    <option value="KA">KA</option>
-    <option value="MH">MH</option>
-    <option value="TN">TN</option>
-    <option value="DL">DL</option>
-    <option value="GJ">GJ</option>
-    <option value="UP">UP</option>
-    <option value="RJ">RJ</option>
-    <option value="KL">KL</option>
-    <option value="WB">WB</option>
-    <option value="AP">AP</option>
-    <!-- Add more as needed -->
-  </select>
-  <span style="font-weight: bold;">-</span>
-  <input type="text" id="suffix" maxlength="6" placeholder="XXXXXX" required class="editable-suffix" />
-</div>
-
+        <div class="human-number-group">
+          <span>HN-</span>
+          <select id="stateCode" required>
+            <option value="KA">KA</option>
+            <option value="MH">MH</option>
+            <option value="TN">TN</option>
+            <option value="DL">DL</option>
+            <option value="GJ">GJ</option>
+            <!-- Add more states -->
+          </select>
+          <span>-</span>
+          <input type="text" id="uniqueId" maxlength="6" placeholder="XXXXXX" required oninput="this.value = this.value.toUpperCase();" />
         </div>
         <input type="password" id="password" placeholder="Password" required />
         <div class="forgot">
@@ -189,41 +181,16 @@
   </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
-      authDomain: "humancare-web1.firebaseapp.com",
-      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com/",
-      projectId: "humancare-web1",
-      appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
     document.getElementById("loginForm").addEventListener("submit", function (e) {
       e.preventDefault();
-
-      const suffix = document.getElementById("suffix").value.toUpperCase();
+      const stateCode = document.getElementById("stateCode").value;
+      const uniqueId = document.getElementById("uniqueId").value.toUpperCase();
       const password = document.getElementById("password").value;
-      const stateCode = document.getElementById("stateCode").value; const humanNumber = `HN-${stateCode}-${suffix}`;
+      const humanNumber = `HN-${stateCode}-${uniqueId}`;
 
-      db.ref("humans/" + humanNumber).once("value")
-        .then(snapshot => {
-          const userData = snapshot.val();
-          if (!userData) {
-            alert("Human Number not found.");
-          } else if (userData.password !== password) {
-            alert("Incorrect password.");
-          } else {
-            localStorage.setItem("humanNumber", humanNumber);
-            localStorage.setItem("humanName", userData.fullName);
-            window.location.href = "dashboard.html"; // update if you use a different dashboard page
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          alert("Error retrieving data");
-        });
+      console.log("Attempt login with:", humanNumber, password);
+
+      // Add your Firebase login logic here
     });
   </script>
 </body>
