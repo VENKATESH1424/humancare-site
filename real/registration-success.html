@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome to Human Care</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      animation: fadeIn 1s ease-in-out;
+    }
+    h2 {
+      color: #0052cc;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    .human-number {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #0a2e52;
+      background: #e9f2ff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      background-color: #0052cc;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #003d99;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Welcome, <span id="humanName">Human</span>!</h2>
+    <p>You have successfully registered.</p>
+    <div>Your Human Number:</div>
+    <div class="human-number" id="humanNumber">HN-XX-XXXXXX</div>
+    <p>Keep this number safe. It will be used for all future care.</p>
+    <button onclick="goToLogin()">Proceed to Login</button>
+  </div>
+
+  <script>
+    const name = localStorage.getItem('humanName') || 'Human';
+    const humanNumber = localStorage.getItem('humanNumber') || 'HN-XX-XXXXXX';
+    document.getElementById('humanName').textContent = name;
+    document.getElementById('humanNumber').textContent = humanNumber;
+
+    function goToLogin() {
+      localStorage.removeItem('humanName');
+      localStorage.removeItem('humanNumber');
+      window.location.href = "human-login.html";
+    }
+  </script>
+</body>
+</html>
