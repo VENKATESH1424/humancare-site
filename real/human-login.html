@@ -12,6 +12,7 @@
       background: linear-gradient(to right, #e3f2fd, #fce4ec);
       overflow: hidden;
     }
+
     .background-icons {
       position: fixed;
       top: 0; left: 0;
@@ -21,16 +22,19 @@
       pointer-events: none;
       overflow: hidden;
     }
+
     .icon {
       position: absolute;
       font-size: 24px;
       color: rgba(0, 0, 0, 0.1);
       animation: float 10s infinite linear;
     }
+
     @keyframes float {
       from { transform: translateY(100vh); }
       to { transform: translateY(-100vh); }
     }
+
     .container {
       z-index: 1;
       position: relative;
@@ -40,6 +44,7 @@
       align-items: center;
       flex-direction: column;
     }
+
     .login-box {
       background: #ffffff;
       padding: 40px 30px;
@@ -49,15 +54,18 @@
       max-width: 400px;
       text-align: center;
     }
+
     .login-box img {
       height: 60px;
       margin-bottom: 16px;
     }
+
     .login-box h2 {
       margin-bottom: 24px;
       font-size: 24px;
       color: #3a3a3a;
     }
+
     input[type="text"], input[type="password"] {
       width: 100%;
       padding: 12px;
@@ -66,15 +74,24 @@
       border-radius: 8px;
       font-size: 14px;
     }
+
+    .email-display {
+      font-size: 14px;
+      color: #0077cc;
+      margin-bottom: 10px;
+    }
+
     .forgot {
       text-align: right;
       margin-bottom: 16px;
     }
+
     .forgot a {
       font-size: 13px;
       color: #3a7bfd;
       text-decoration: none;
     }
+
     button {
       width: 100%;
       padding: 12px;
@@ -85,14 +102,17 @@
       font-size: 16px;
       cursor: pointer;
     }
+
     .login-options {
       margin-top: 16px;
       font-size: 14px;
     }
+
     .login-options a {
       color: #3a7bfd;
       text-decoration: none;
     }
+
     footer {
       font-size: 13px;
       color: #666;
@@ -116,6 +136,7 @@
       <h2>Human</h2>
       <form id="loginForm">
         <input type="text" id="humanNumber" placeholder="Enter your Human Number" required />
+        <div class="email-display" id="linkedEmail"></div>
         <input type="password" id="password" placeholder="Password" required />
         <div class="forgot">
           <a href="#">Forgot Password?</a>
@@ -123,12 +144,13 @@
         <button type="submit">Login</button>
       </form>
       <div class="login-options">
-        <p>Not a Human yet? <a href="register.html">Become a Human</a></p>
+        <p>Not a Human yet? <a href="human-register.html">Become a Human</a></p>
       </div>
     </div>
     <footer>© 2025 HomosaP Healthcare Pvt Ltd. All rights reserved.</footer>
   </div>
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   <script>
@@ -143,36 +165,59 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const humanNumber = document.getElementById("humanNumber").value.trim();
-      const password = document.getElementById("password").value;
+    const humanInput = document.getElementById("humanNumber");
+    const linkedEmail = document.getElementById("linkedEmail");
+    const form = document.getElementById("loginForm");
 
-      if (!humanNumber || !password) {
-        alert("Please fill in both fields.");
+    humanInput.addEventListener("blur", () => {
+      const humanNumber = humanInput.value.trim();
+      if (!humanNumber) {
+        linkedEmail.innerText = "";
         return;
       }
 
-      try {
-        const snapshot = await db.ref(`humans/${humanNumber}`).once("value");
-        if (!snapshot.exists()) {
-          alert("Human Number not found.");
-          return;
-        }
-
-        const userData = snapshot.val();
-        if (userData.password === password) {
-          localStorage.setItem("humanName", userData.fullName);
-          localStorage.setItem("humanNumber", humanNumber);
-          alert("Login successful!");
-          window.location.href = "dashboard.html";
+      db.ref(`humans/${humanNumber}`).get().then(snapshot => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          linkedEmail.innerText = "Email: " + data.email;
         } else {
-          alert("Incorrect password.");
+          linkedEmail.innerText = "No such Human found.";
         }
-      } catch (error) {
-        console.error("Login error:", error);
-        alert("An error occurred. Please try again.");
+      }).catch(() => {
+        linkedEmail.innerText = "Error retrieving data.";
+      });
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const humanNumber = humanInput.value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!humanNumber || !password) {
+        alert("Please fill in all fields.");
+        return;
       }
+
+      db.ref(`humans/${humanNumber}`).get().then(snapshot => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+
+          if (data.password === password) {
+            localStorage.setItem("humanName", data.fullName);
+            localStorage.setItem("humanNumber", humanNumber);
+            localStorage.setItem("humanEmail", data.email);
+            window.location.href = "dashboard.html"; // Replace with actual dashboard
+          } else {
+            alert("Incorrect password.");
+          }
+        } else {
+          alert("Human Number not found.");
+        }
+      }).catch(error => {
+        console.error(error);
+        alert("Login failed. Please try again.");
+      });
     });
   </script>
 </body>
