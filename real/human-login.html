@@ -12,7 +12,6 @@
       background: linear-gradient(to right, #e3f2fd, #fce4ec);
       overflow: hidden;
     }
-
     .background-icons {
       position: fixed;
       top: 0; left: 0;
@@ -22,19 +21,16 @@
       pointer-events: none;
       overflow: hidden;
     }
-
     .icon {
       position: absolute;
       font-size: 24px;
       color: rgba(0, 0, 0, 0.1);
       animation: float 10s infinite linear;
     }
-
     @keyframes float {
       from { transform: translateY(100vh); }
       to { transform: translateY(-100vh); }
     }
-
     .container {
       z-index: 1;
       position: relative;
@@ -44,7 +40,6 @@
       align-items: center;
       flex-direction: column;
     }
-
     .login-box {
       background: #ffffff;
       padding: 40px 30px;
@@ -54,18 +49,15 @@
       max-width: 400px;
       text-align: center;
     }
-
     .login-box img {
       height: 60px;
       margin-bottom: 16px;
     }
-
     .login-box h2 {
       margin-bottom: 24px;
       font-size: 24px;
       color: #3a3a3a;
     }
-
     input[type="text"], input[type="password"] {
       width: 100%;
       padding: 12px;
@@ -74,18 +66,15 @@
       border-radius: 8px;
       font-size: 14px;
     }
-
     .forgot {
       text-align: right;
       margin-bottom: 16px;
     }
-
     .forgot a {
       font-size: 13px;
       color: #3a7bfd;
       text-decoration: none;
     }
-
     button {
       width: 100%;
       padding: 12px;
@@ -96,17 +85,14 @@
       font-size: 16px;
       cursor: pointer;
     }
-
     .login-options {
       margin-top: 16px;
       font-size: 14px;
     }
-
     .login-options a {
       color: #3a7bfd;
       text-decoration: none;
     }
-
     footer {
       font-size: 13px;
       color: #666;
@@ -128,9 +114,9 @@
     <div class="login-box">
       <img src="assets/human-logo.png" alt="Human Logo" />
       <h2>Human</h2>
-      <form>
-        <input type="text" placeholder="Enter your Human Number" required />
-        <input type="password" placeholder="Password" required />
+      <form id="loginForm">
+        <input type="text" id="humanNumber" placeholder="Enter your Human Number" required />
+        <input type="password" id="password" placeholder="Password" required />
         <div class="forgot">
           <a href="#">Forgot Password?</a>
         </div>
@@ -142,5 +128,52 @@
     </div>
     <footer>© 2025 HomosaP Healthcare Pvt Ltd. All rights reserved.</footer>
   </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
+      authDomain: "humancare-web1.firebaseapp.com",
+      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com/",
+      projectId: "humancare-web1",
+      appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const humanNumber = document.getElementById("humanNumber").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!humanNumber || !password) {
+        alert("Please fill in both fields.");
+        return;
+      }
+
+      try {
+        const snapshot = await db.ref(`humans/${humanNumber}`).once("value");
+        if (!snapshot.exists()) {
+          alert("Human Number not found.");
+          return;
+        }
+
+        const userData = snapshot.val();
+        if (userData.password === password) {
+          localStorage.setItem("humanName", userData.fullName);
+          localStorage.setItem("humanNumber", humanNumber);
+          alert("Login successful!");
+          window.location.href = "dashboard.html";
+        } else {
+          alert("Incorrect password.");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("An error occurred. Please try again.");
+      }
+    });
+  </script>
 </body>
 </html>
