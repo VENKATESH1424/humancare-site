@@ -206,7 +206,6 @@
 
           db.ref(`humans/${humanNumber}`).set({ ...formData, humanNumber })
             .then(() => {
-              alert("Registration successful! Your Human Number is " + humanNumber);
               localStorage.setItem('humanName', formData.fullName);
                localStorage.setItem('humanNumber', humanNumber);
                 window.location.href = "registration-success.html";
