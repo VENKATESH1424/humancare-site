@@ -111,38 +111,54 @@
       bottom: 10px;
       width: 100%;
       text-align: center;
-      font-size: 12px;
+      font-size: 13px;
       color: #555;
     }
   </style>
 </head>
 <body>
   <div class="background-icons">
-    <i class="fas fa-pills icon" style="top: 20%; left: 10%; animation-delay: 0s;"></i>
-    <i class="fas fa-syringe icon" style="top: 50%; left: 80%; animation-delay: 2s;"></i>
-    <i class="fas fa-stethoscope icon" style="top: 80%; left: 40%; animation-delay: 4s;"></i>
-    <i class="fas fa-heartbeat icon" style="top: 60%; left: 20%; animation-delay: 6s;"></i>
-    <i class="fas fa-vial icon" style="top: 30%; left: 70%; animation-delay: 8s;"></i>
+    <i class="fas fa-vials icon" style="top: 20%; left: 10%; animation-delay: 0s;"></i>
+    <i class="fas fa-microscope icon" style="top: 50%; left: 80%; animation-delay: 2s;"></i>
+    <i class="fas fa-flask icon" style="top: 80%; left: 40%; animation-delay: 4s;"></i>
+    <i class="fas fa-dna icon" style="top: 60%; left: 20%; animation-delay: 6s;"></i>
+    <i class="fas fa-notes-medical icon" style="top: 30%; left: 70%; animation-delay: 8s;"></i>
   </div>
 
   <div class="container">
     <div class="login-box">
       <img src="assets/human-logo.png" alt="Human Logo" />
       <h2>Lab</h2>
-      <form>
-        <input type="text" placeholder="Enter your Lab ID" required />
-        <input type="password" placeholder="Password" required />
+      <form onsubmit="event.preventDefault(); handleLogin();">
+        <input type="text" id="labId" placeholder="Enter your Lab ID" required />
+        <input type="password" id="labPassword" placeholder="Password" required />
         <div class="forgot">
           <a href="#">Forgot Password?</a>
         </div>
         <button type="submit">Login</button>
       </form>
-      <div class="login-options">
-        <p>New Lab? <a href="#">Register here</a></p>
-      </div>
     </div>
   </div>
 
   <footer>© 2025 HomosaP Healthcare Pvt Ltd. All rights reserved.</footer>
+
+  <script>
+    const tempLabUsers = {
+      "LAB001": "lab123",
+      "LAB002": "pathology456"
+    };
+
+    function handleLogin() {
+      const id = document.getElementById("labId").value.trim();
+      const pass = document.getElementById("labPassword").value;
+
+      if (tempLabUsers[id] && tempLabUsers[id] === pass) {
+        localStorage.setItem("labId", id);
+        window.location.href = "lab-dashboard.html"; // Update with real path if needed
+      } else {
+        alert("Invalid Lab ID or Password");
+      }
+    }
+  </script>
 </body>
 </html>
