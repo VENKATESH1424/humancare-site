@@ -23,6 +23,21 @@
       pointer-events: none;
       overflow: hidden;
     }
+     .header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-title {
+  font-weight: bold;
+  font-size: 20px;
+  color: #333;
+}
+
 
     .background-icons .icon {
       position: absolute;
@@ -204,14 +219,14 @@
   </div>
 
   <header>
-    <div class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
-    <div class="logo" style="display: flex; align-items: center; gap: 10px;">
-  <img src="assets/human-logo.png" alt="Human Logo" height="40">
-  <span style="font-weight: bold; font-size: 20px; color: #333;">Human Care</span>
-</div>
+  <div class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+  <div class="header-center">
+    <img src="assets/human-logo.png" alt="Human Logo" height="40">
+    <span class="header-title">Human Care</span>
+  </div>
+  <div class="human-id" id="humanNumberDisplay">HN-XX-XXXXXX</div>
+</header>
 
-    <div class="human-id" id="humanNumberDisplay">HN-XX-XXXXXX</div>
-  </header>
 
   <div class="sidebar" id="sidebar">
     <div class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></div>
