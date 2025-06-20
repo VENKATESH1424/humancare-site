@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Favorite Doctors - Human Care</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      overflow-x: hidden;
+    }
+    .background-icons {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .background-icons .icon {
+      position: absolute;
+      font-size: 28px;
+      color: rgba(0, 0, 0, 0.05);
+      animation: float 12s linear infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-100vh); }
+    }
+    header {
+      background: #fff;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: relative;
+      z-index: 2;
+    }
+    .header-title {
+      font-weight: bold;
+      font-size: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-title img {
+      height: 40px;
+    }
+    .human-id {
+      font-weight: bold;
+      color: #555;
+    }
+    .back-button {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #3a7bfd;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 50px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .fav-list {
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 16px 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .fav-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .fav-card img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .fav-card .name {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .fav-card .specialty {
+      font-size: 14px;
+      color: #555;
+    }
+    .unfavorite-btn {
+      margin-top: 12px;
+      background: #e53935;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-icons">
+    <i class="fas fa-heartbeat icon" style="top: 10%; left: 15%; animation-delay: 0s;"></i>
+    <i class="fas fa-user-md icon" style="top: 30%; left: 80%; animation-delay: 2s;"></i>
+    <i class="fas fa-pills icon" style="top: 50%; left: 30%; animation-delay: 4s;"></i>
+    <i class="fas fa-syringe icon" style="top: 70%; left: 70%; animation-delay: 6s;"></i>
+    <i class="fas fa-stethoscope icon" style="top: 90%; left: 50%; animation-delay: 8s;"></i>
+  </div>
+
+  <header>
+    <div class="header-title">
+      <img src="assets/human-logo.png" alt="Human Logo">
+      <span>Favorite Doctors</span>
+    </div>
+    <div class="human-id" id="humanNumberDisplay">HN-XX-XXXXXX</div>
+  </header>
+
+  <div class="fav-list" id="favList"></div>
+
+  <button class="back-button" onclick="location.href='doctor.html'">⬅ Back</button>
+
+  <script>
+    const favorites = [
+      {
+        name: "Dr. Priya Nair",
+        specialty: "Cardiologist",
+        profile: "https://randomuser.me/api/portraits/women/44.jpg"
+      },
+      {
+        name: "Dr. Arvind Kumar",
+        specialty: "General Physician",
+        profile: "https://randomuser.me/api/portraits/men/46.jpg"
+      }
+    ];
+
+    function renderFavorites() {
+      const container = document.getElementById("favList");
+      container.innerHTML = "";
+      favorites.forEach(doc => {
+        const card = document.createElement("div");
+        card.className = "fav-card";
+        card.innerHTML = `
+          <img src="${doc.profile}" alt="${doc.name}" />
+          <div class="name">${doc.name}</div>
+          <div class="specialty">${doc.specialty}</div>
+          <button class="unfavorite-btn">Unfavorite</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    window.onload = () => {
+      document.getElementById("humanNumberDisplay").textContent = localStorage.getItem("humanNumber") || "HN-XX-XXXXXX";
+      renderFavorites();
+    };
+  </script>
+</body>
+</html>
