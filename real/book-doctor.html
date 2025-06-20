@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Doctor - Human Care</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      overflow-x: hidden;
+    }
+    .background-icons {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .background-icons .icon {
+      position: absolute;
+      font-size: 28px;
+      color: rgba(0, 0, 0, 0.05);
+      animation: float 12s linear infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-100vh); }
+    }
+    header {
+      background: #fff;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: relative;
+      z-index: 2;
+    }
+    .header-title {
+      font-weight: bold;
+      font-size: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-title img {
+      height: 40px;
+    }
+    .human-id {
+      font-weight: bold;
+      color: #555;
+    }
+    .back-button {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #3a7bfd;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 50px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .doctor-list {
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 16px 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .doctor-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .doctor-card img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      align-self: center;
+    }
+    .doctor-card .name {
+      font-weight: bold;
+      font-size: 18px;
+      text-align: center;
+    }
+    .doctor-card .specialty, .meta {
+      font-size: 14px;
+      color: #555;
+      text-align: center;
+    }
+    .meta span {
+      display: block;
+      margin: 2px 0;
+    }
+    .book-btn {
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: #3a7bfd;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      align-self: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-icons">
+    <i class="fas fa-heartbeat icon" style="top: 10%; left: 15%; animation-delay: 0s;"></i>
+    <i class="fas fa-user-md icon" style="top: 30%; left: 80%; animation-delay: 2s;"></i>
+    <i class="fas fa-pills icon" style="top: 50%; left: 30%; animation-delay: 4s;"></i>
+    <i class="fas fa-syringe icon" style="top: 70%; left: 70%; animation-delay: 6s;"></i>
+    <i class="fas fa-stethoscope icon" style="top: 90%; left: 50%; animation-delay: 8s;"></i>
+  </div>
+
+  <header>
+    <div class="header-title">
+      <img src="assets/human-logo.png" alt="Human Logo">
+      <span>Book Doctor</span>
+    </div>
+    <div class="human-id" id="humanNumberDisplay">HN-XX-XXXXXX</div>
+  </header>
+
+  <div class="doctor-list" id="doctorList"></div>
+
+  <button class="back-button" onclick="location.href='doctor.html'">⬅ Back</button>
+
+  <script>
+    const doctors = [
+      {
+        name: "Dr. Priya Nair",
+        specialization: "Cardiologist",
+        hospital: "City Heart Clinic",
+        location: "Bangalore",
+        availability: "Mon-Fri, 10AM - 1PM",
+        phone: "9876543210",
+        email: "priya@clinic.com",
+        profile: "https://randomuser.me/api/portraits/women/44.jpg"
+      },
+      {
+        name: "Dr. Arvind Kumar",
+        specialization: "General Physician",
+        hospital: "Govt Hospital",
+        location: "Mysuru",
+        availability: "Tue-Sat, 2PM - 6PM",
+        phone: "9845123456",
+        email: "arvind@hospital.gov",
+        profile: "https://randomuser.me/api/portraits/men/46.jpg"
+      }
+    ];
+
+    function renderDoctors() {
+      const container = document.getElementById("doctorList");
+      container.innerHTML = "";
+      doctors.forEach(doc => {
+        const card = document.createElement("div");
+        card.className = "doctor-card";
+        card.innerHTML = `
+          <img src="${doc.profile}" alt="${doc.name}" />
+          <div class="name">${doc.name}</div>
+          <div class="specialty">${doc.specialization}</div>
+          <div class="meta">
+            <span>🏥 ${doc.hospital}, ${doc.location}</span>
+            <span>🕒 ${doc.availability}</span>
+            <span>📞 ${doc.phone}</span>
+            <span>✉️ ${doc.email}</span>
+          </div>
+          <button class="book-btn">Book Appointment</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    window.onload = () => {
+      document.getElementById("humanNumberDisplay").textContent = localStorage.getItem("humanNumber") || "HN-XX-XXXXXX";
+      renderDoctors();
+    };
+  </script>
+</body>
+</html>
