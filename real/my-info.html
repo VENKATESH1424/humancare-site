@@ -80,10 +80,9 @@
       font-size: 13px;
       margin-bottom: 4px;
     }
-    .language-switcher {
+    .language-switcher, .back-button {
       position: fixed;
       bottom: 20px;
-      right: 20px;
       background: #3a7bfd;
       color: #fff;
       border: none;
@@ -92,6 +91,12 @@
       font-size: 14px;
       cursor: pointer;
       z-index: 10;
+    }
+    .language-switcher {
+      right: 20px;
+    }
+    .back-button {
+      left: 20px;
     }
     @media (max-width: 600px) {
       .info-container {
@@ -113,33 +118,34 @@
   <header>
     <div class="header-title">
       <img src="assets/human-logo.png" alt="Human Logo">
-      <span>My Info</span>
+      <span id="headerTitle">My Info</span>
     </div>
     <div class="human-id" id="humanNumberDisplay">HN-XX-XXXXXX</div>
   </header>
 
   <div class="info-container">
-    <div><strong>Full Name</strong><span id="infoName">-</span></div>
-    <div><strong>Date of Birth</strong><span id="infoDob">-</span></div>
-    <div><strong>Gender</strong><span id="infoGender">-</span></div>
-    <div><strong>Phone</strong><span id="infoPhone">-</span></div>
-    <div><strong>Emergency Contact</strong><span id="infoEmergency">-</span></div>
-    <div><strong>Email</strong><span id="infoEmail">-</span></div>
-    <div style="grid-column: 1 / -1;"><strong>Address</strong><span id="infoAddress">-</span></div>
-    <div><strong>Blood Group</strong><span id="infoBlood">-</span></div>
-    <div><strong>Caste</strong><span id="infoCaste">-</span></div>
-    <div><strong>Education</strong><span id="infoEducation">-</span></div>
-    <div><strong>Mother Tongue</strong><span id="infoMotherTongue">-</span></div>
-    <div><strong>Occupation</strong><span id="infoOccupation">-</span></div>
-    <div><strong>Aadhaar No</strong><span id="infoAadhaar">-</span></div>
-    <div><strong>Family Income</strong><span id="infoIncome">-</span></div>
-    <div><strong>BPL No</strong><span id="infoBpl">-</span></div>
-    <div><strong>ABHA Number</strong><span id="infoAbha">-</span></div>
-    <div><strong>ESI Number</strong><span id="infoEsi">-</span></div>
-    <div><strong>Vajpayee ID</strong><span id="infoVajpayee">-</span></div>
+    <div><strong data-i18n="fullName">Full Name</strong><span id="infoName">-</span></div>
+    <div><strong data-i18n="dob">Date of Birth</strong><span id="infoDob">-</span></div>
+    <div><strong data-i18n="gender">Gender</strong><span id="infoGender">-</span></div>
+    <div><strong data-i18n="phone">Phone</strong><span id="infoPhone">-</span></div>
+    <div><strong data-i18n="emergency">Emergency Contact</strong><span id="infoEmergency">-</span></div>
+    <div><strong data-i18n="email">Email</strong><span id="infoEmail">-</span></div>
+    <div style="grid-column: 1 / -1;"><strong data-i18n="address">Address</strong><span id="infoAddress">-</span></div>
+    <div><strong data-i18n="blood">Blood Group</strong><span id="infoBlood">-</span></div>
+    <div><strong data-i18n="caste">Caste</strong><span id="infoCaste">-</span></div>
+    <div><strong data-i18n="education">Education</strong><span id="infoEducation">-</span></div>
+    <div><strong data-i18n="motherTongue">Mother Tongue</strong><span id="infoMotherTongue">-</span></div>
+    <div><strong data-i18n="occupation">Occupation</strong><span id="infoOccupation">-</span></div>
+    <div><strong data-i18n="aadhaar">Aadhaar No</strong><span id="infoAadhaar">-</span></div>
+    <div><strong data-i18n="income">Family Income</strong><span id="infoIncome">-</span></div>
+    <div><strong data-i18n="bpl">BPL No</strong><span id="infoBpl">-</span></div>
+    <div><strong data-i18n="abha">ABHA Number</strong><span id="infoAbha">-</span></div>
+    <div><strong data-i18n="esi">ESI Number</strong><span id="infoEsi">-</span></div>
+    <div><strong data-i18n="vajpayee">Vajpayee ID</strong><span id="infoVajpayee">-</span></div>
   </div>
 
   <button class="language-switcher" onclick="cycleLanguage()">🌐</button>
+  <button class="back-button" onclick="location.href='human-dashboard.html'">⬅ Dashboard</button>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -184,14 +190,92 @@
       document.getElementById("infoVajpayee").textContent = d.vajpayee || "-";
     });
 
-    const langs = ["en", "hi", "kn"];
+    const translations = {
+      en: {
+        headerTitle: "My Info",
+        fullName: "Full Name",
+        dob: "Date of Birth",
+        gender: "Gender",
+        phone: "Phone",
+        emergency: "Emergency Contact",
+        email: "Email",
+        address: "Address",
+        blood: "Blood Group",
+        caste: "Caste",
+        education: "Education",
+        motherTongue: "Mother Tongue",
+        occupation: "Occupation",
+        aadhaar: "Aadhaar No",
+        income: "Family Income",
+        bpl: "BPL No",
+        abha: "ABHA Number",
+        esi: "ESI Number",
+        vajpayee: "Vajpayee ID"
+      },
+      hi: {
+        headerTitle: "मेरी जानकारी",
+        fullName: "पूरा नाम",
+        dob: "जन्म तिथि",
+        gender: "लिंग",
+        phone: "फ़ोन",
+        emergency: "आपातकालीन संपर्क",
+        email: "ईमेल",
+        address: "पता",
+        blood: "ब्लड ग्रुप",
+        caste: "जाति",
+        education: "शिक्षा",
+        motherTongue: "मातृभाषा",
+        occupation: "पेशा",
+        aadhaar: "आधार नंबर",
+        income: "पारिवारिक आय",
+        bpl: "बीपीएल नंबर",
+        abha: "आभा नंबर",
+        esi: "ईएसआई नंबर",
+        vajpayee: "वजपेयी आईडी"
+      },
+      kn: {
+        headerTitle: "ನನ್ನ ಮಾಹಿತಿ",
+        fullName: "ಪೂರ್ಣ ಹೆಸರು",
+        dob: "ಹುಟ್ಟಿದ ದಿನಾಂಕ",
+        gender: "ಲಿಂಗ",
+        phone: "ದೂರವಾಣಿ",
+        emergency: "ತುರ್ತು ಸಂಪರ್ಕ",
+        email: "ಇಮೇಲ್",
+        address: "ವಿಳಾಸ",
+        blood: "ರಕ್ತದ ಗುಂಪು",
+        caste: "ಜಾತಿ",
+        education: "ಶಿಕ್ಷಣ",
+        motherTongue: "ತಾಯ್ನುಡಿ",
+        occupation: "ಉದ್ಯೋಗ",
+        aadhaar: "ಆಧಾರ್ ಸಂಖ್ಯೆ",
+        income: "ಕುಟುಂಬದ ಆದಾಯ",
+        bpl: "ಬಿಪಿಎಲ್ ಸಂಖ್ಯೆ",
+        abha: "ಆಭಾ ಸಂಖ್ಯೆ",
+        esi: "ಇಎಸ್ಐ ಸಂಖ್ಯೆ",
+        vajpayee: "ವಜಪೇಯ್ ಐಡಿ"
+      }
+    };
+
     let currentLang = localStorage.getItem("humanLang") || "en";
-    function cycleLanguage() {
-      const next = (langs.indexOf(currentLang) + 1) % langs.length;
-      currentLang = langs[next];
-      localStorage.setItem("humanLang", currentLang);
-      location.reload();
+    function translateUI() {
+      const t = translations[currentLang] || translations["en"];
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        el.textContent = t[key] || key;
+      });
+      document.getElementById("headerTitle").textContent = t.headerTitle;
     }
+    function cycleLanguage() {
+      const langs = ["en", "hi", "kn"];
+      const nextIndex = (langs.indexOf(currentLang) + 1) % langs.length;
+      currentLang = langs[nextIndex];
+      localStorage.setItem("humanLang", currentLang);
+      translateUI();
+    }
+
+    window.onload = () => {
+      translateUI();
+    };
   </script>
 </body>
 </html>
