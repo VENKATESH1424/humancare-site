@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Dashboard - Human Care</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      overflow-x: hidden;
+    }
+    .background-icons {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .background-icons .icon {
+      position: absolute;
+      font-size: 28px;
+      color: rgba(0, 0, 0, 0.05);
+      animation: float 12s linear infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-100vh); }
+    }
+    header {
+      background: #fff;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: relative;
+      z-index: 2;
+    }
+    .hamburger {
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .header-title {
+      font-weight: bold;
+      font-size: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-title img {
+      height: 40px;
+    }
+    .doctor-id {
+      font-weight: bold;
+      color: #555;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -240px;
+      height: 100vh;
+      width: 220px;
+      background: #fff;
+      box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+      z-index: 3;
+      padding-top: 80px;
+      transition: left 0.3s ease;
+    }
+    .sidebar.active {
+      left: 0;
+    }
+    .sidebar a {
+      display: block;
+      padding: 14px 24px;
+      color: #333;
+      text-decoration: none;
+      border-bottom: 1px solid #eee;
+    }
+    .sidebar a:hover {
+      background-color: #f0f0f0;
+    }
+    .sidebar-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
+    }
+    .dashboard {
+      margin-left: 240px;
+      max-width: 960px;
+      padding: 40px 16px 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .tile {
+      background: #fff;
+      padding: 24px 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      font-size: 16px;
+      font-weight: 500;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      text-align: center;
+    }
+    .tile:hover {
+      transform: translateY(-5px);
+    }
+    .tile i {
+      font-size: 28px;
+      margin-bottom: 12px;
+      color: #3a7bfd;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-icons">
+    <i class="fas fa-heartbeat icon" style="top: 10%; left: 15%; animation-delay: 0s;"></i>
+    <i class="fas fa-user-md icon" style="top: 30%; left: 80%; animation-delay: 2s;"></i>
+    <i class="fas fa-pills icon" style="top: 50%; left: 30%; animation-delay: 4s;"></i>
+    <i class="fas fa-syringe icon" style="top: 70%; left: 70%; animation-delay: 6s;"></i>
+    <i class="fas fa-stethoscope icon" style="top: 90%; left: 50%; animation-delay: 8s;"></i>
+  </div>
+
+  <header>
+    <div class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+    <div class="header-title">
+      <img src="assets/human-logo.png" alt="Human Logo">
+      <span>Doctor Dashboard</span>
+    </div>
+    <div class="doctor-id" id="doctorIdDisplay">DR-XX-XXXX</div>
+  </header>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></div>
+    <a href="doctor-dashboard.html">Dashboard</a>
+    <a href="doctor-schedule.html">My Schedule</a>
+    <a href="doctor-patients.html">My Patients</a>
+    <a href="doctor-treatment.html">Treatment</a>
+    <a href="doctor-availability.html">Set Availability</a>
+    <a href="#">About Us</a>
+    <a href="#">Contact Us</a>
+    <a href="#">Terms & Conditions</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Logout</a>
+  </div>
+
+  <div class="dashboard">
+    <div class="tile" onclick="location.href='doctor-schedule.html'">
+      <i class="fas fa-calendar-check"></i><br>
+      My Schedule
+    </div>
+    <div class="tile" onclick="location.href='doctor-patients.html'">
+      <i class="fas fa-users"></i><br>
+      My Patients
+    </div>
+    <div class="tile" onclick="location.href='doctor-treatment.html'">
+      <i class="fas fa-notes-medical"></i><br>
+      Treatment
+    </div>
+    <div class="tile" onclick="location.href='doctor-availability.html'">
+      <i class="fas fa-clock"></i><br>
+      Set Availability
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+    window.onload = () => {
+      document.getElementById("doctorIdDisplay").textContent = localStorage.getItem("doctorId") || "DR-XX-XXXX";
+    };
+  </script>
+</body>
+</html>
