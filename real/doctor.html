@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor - Human Care</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      overflow-x: hidden;
+    }
+    .background-icons {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .background-icons .icon {
+      position: absolute;
+      font-size: 28px;
+      color: rgba(0, 0, 0, 0.05);
+      animation: float 12s linear infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-100vh); }
+    }
+    header {
+      background: #fff;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: relative;
+      z-index: 2;
+    }
+    .header-title {
+      font-weight: bold;
+      font-size: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-title img {
+      height: 40px;
+    }
+    .human-id {
+      font-weight: bold;
+      color: #555;
+    }
+    .language-switcher, .back-button {
+      position: fixed;
+      bottom: 20px;
+      background: #3a7bfd;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 50px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .language-switcher {
+      right: 20px;
+    }
+    .back-button {
+      left: 20px;
+    }
+    .main-content {
+      padding: 30px 16px 80px;
+      max-width: 960px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
+    }
+    .tiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      text-align: center;
+    }
+    .tile {
+      background: #fff;
+      padding: 24px 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      font-size: 16px;
+      font-weight: 500;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .tile:hover {
+      transform: translateY(-5px);
+    }
+    .tile i {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #3a7bfd;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-icons">
+    <i class="fas fa-heartbeat icon" style="top: 10%; left: 15%; animation-delay: 0s;"></i>
+    <i class="fas fa-user-md icon" style="top: 30%; left: 80%; animation-delay: 2s;"></i>
+    <i class="fas fa-pills icon" style="top: 50%; left: 30%; animation-delay: 4s;"></i>
+    <i class="fas fa-syringe icon" style="top: 70%; left: 70%; animation-delay: 6s;"></i>
+    <i class="fas fa-stethoscope icon" style="top: 90%; left: 50%; animation-delay: 8s;"></i>
+  </div>
+
+  <header>
+    <div class="header-title">
+      <img src="assets/human-logo.png" alt="Human Logo">
+      <span id="headerTitle">Doctors</span>
+    </div>
+    <div class="human-id" id="humanNumberDisplay">HN-XX-XXXXXX</div>
+  </header>
+
+  <div class="main-content">
+    <h2 class="section-title" data-i18n="doctorSection">Doctor Services</h2>
+    <div class="tiles">
+      <div class="tile" onclick="location.href='book-doctor.html'"><i class="fas fa-calendar-check"></i><br><span data-i18n="book">Book Appointment</span></div>
+      <div class="tile" onclick="location.href='past-doctors.html'"><i class="fas fa-history"></i><br><span data-i18n="past">Past Visits</span></div>
+      <div class="tile" onclick="location.href='favorite-doctors.html'"><i class="fas fa-heart"></i><br><span data-i18n="favorite">Favorite Doctors</span></div>
+    </div>
+  </div>
+
+  <button class="language-switcher" onclick="cycleLanguage()">🌐</button>
+  <button class="back-button" onclick="location.href='human-dashboard.html'">⬅ Dashboard</button>
+
+  <script>
+    const translations = {
+      en: {
+        headerTitle: "Doctors",
+        doctorSection: "Doctor Services",
+        book: "Book Appointment",
+        past: "Past Visits",
+        favorite: "Favorite Doctors"
+      },
+      hi: {
+        headerTitle: "डॉक्टर",
+        doctorSection: "डॉक्टर सेवाएं",
+        book: "अपॉइंटमेंट बुक करें",
+        past: "पिछली यात्राएं",
+        favorite: "पसंदीदा डॉक्टर"
+      },
+      kn: {
+        headerTitle: "ಡಾಕ್ಟರ್‍ಗಳು",
+        doctorSection: "ಡಾಕ್ಟರ್ ಸೇವೆಗಳು",
+        book: "ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್ ಬುಕ್ ಮಾಡಿ",
+        past: "ಹಿಂದಿನ ಭೇಟಿ",
+        favorite: "ಇಷ್ಟದ ಡಾಕ್ಟರ್"
+      }
+    };
+
+    let currentLang = localStorage.getItem("humanLang") || "en";
+    function cycleLanguage() {
+      const langs = ["en", "hi", "kn"];
+      const nextIndex = (langs.indexOf(currentLang) + 1) % langs.length;
+      currentLang = langs[nextIndex];
+      localStorage.setItem("humanLang", currentLang);
+      translateUI();
+    }
+
+    function translateUI() {
+      const t = translations[currentLang] || translations.en;
+      document.getElementById("headerTitle").textContent = t.headerTitle;
+      document.querySelector("[data-i18n='doctorSection']").textContent = t.doctorSection;
+      document.querySelector("[data-i18n='book']").textContent = t.book;
+      document.querySelector("[data-i18n='past']").textContent = t.past;
+      document.querySelector("[data-i18n='favorite']").textContent = t.favorite;
+    }
+
+    window.onload = () => {
+      document.getElementById("humanNumberDisplay").textContent = localStorage.getItem("humanNumber") || "HN-XX-XXXXXX";
+      translateUI();
+    };
+  </script>
+</body>
+</html>
