@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Info - Human Care</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      overflow-x: hidden;
+    }
+    .background-icons {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .background-icons .icon {
+      position: absolute;
+      font-size: 28px;
+      color: rgba(0, 0, 0, 0.05);
+      animation: float 12s linear infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-100vh); }
+    }
+    header {
+      background: #fff;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: relative;
+      z-index: 2;
+    }
+    .header-title {
+      font-weight: bold;
+      font-size: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-title img {
+      height: 40px;
+    }
+    .human-id {
+      font-weight: bold;
+      color: #555;
+    }
+    .info-container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .info-container div {
+      font-size: 16px;
+      color: #333;
+    }
+    .info-container div strong {
+      display: block;
+      color: #777;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    .language-switcher {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #3a7bfd;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 50px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    @media (max-width: 600px) {
+      .info-container {
+        grid-template-columns: 1fr;
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-icons">
+    <i class="fas fa-heartbeat icon" style="top: 10%; left: 15%; animation-delay: 0s;"></i>
+    <i class="fas fa-user-md icon" style="top: 30%; left: 80%; animation-delay: 2s;"></i>
+    <i class="fas fa-pills icon" style="top: 50%; left: 30%; animation-delay: 4s;"></i>
+    <i class="fas fa-syringe icon" style="top: 70%; left: 70%; animation-delay: 6s;"></i>
+    <i class="fas fa-stethoscope icon" style="top: 90%; left: 50%; animation-delay: 8s;"></i>
+  </div>
+
+  <header>
+    <div class="header-title">
+      <img src="assets/human-logo.png" alt="Human Logo">
+      <span>My Info</span>
+    </div>
+    <div class="human-id" id="humanNumberDisplay">HN-XX-XXXXXX</div>
+  </header>
+
+  <div class="info-container">
+    <div><strong>Full Name</strong><span id="infoName">-</span></div>
+    <div><strong>Date of Birth</strong><span id="infoDob">-</span></div>
+    <div><strong>Gender</strong><span id="infoGender">-</span></div>
+    <div><strong>Phone</strong><span id="infoPhone">-</span></div>
+    <div><strong>Emergency Contact</strong><span id="infoEmergency">-</span></div>
+    <div><strong>Email</strong><span id="infoEmail">-</span></div>
+    <div style="grid-column: 1 / -1;"><strong>Address</strong><span id="infoAddress">-</span></div>
+    <div><strong>Blood Group</strong><span id="infoBlood">-</span></div>
+    <div><strong>Caste</strong><span id="infoCaste">-</span></div>
+    <div><strong>Education</strong><span id="infoEducation">-</span></div>
+    <div><strong>Mother Tongue</strong><span id="infoMotherTongue">-</span></div>
+    <div><strong>Occupation</strong><span id="infoOccupation">-</span></div>
+    <div><strong>Aadhaar No</strong><span id="infoAadhaar">-</span></div>
+    <div><strong>Family Income</strong><span id="infoIncome">-</span></div>
+    <div><strong>BPL No</strong><span id="infoBpl">-</span></div>
+    <div><strong>ABHA Number</strong><span id="infoAbha">-</span></div>
+    <div><strong>ESI Number</strong><span id="infoEsi">-</span></div>
+    <div><strong>Vajpayee ID</strong><span id="infoVajpayee">-</span></div>
+  </div>
+
+  <button class="language-switcher" onclick="cycleLanguage()">🌐</button>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+            apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
+      authDomain: "humancare-web1.firebaseapp.com",
+      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com",
+      projectId: "humancare-web1",
+      storageBucket: "humancare-web1.appspot.com",
+      messagingSenderId: "156578165275",
+      appId: "1:156578165275:web:e962a6aa4a1c7a503e2c2a"
+
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const humanNumber = localStorage.getItem("humanNumber") || "HN-XX-XXXXXX";
+    document.getElementById("humanNumberDisplay").innerText = humanNumber;
+
+    db.ref("humans/" + humanNumber).once("value").then(snapshot => {
+      const d = snapshot.val() || {};
+      document.getElementById("infoName").textContent = d.fullName || "-";
+      document.getElementById("infoDob").textContent = d.dob || "-";
+      document.getElementById("infoGender").textContent = d.gender || "-";
+      document.getElementById("infoPhone").textContent = d.phone || "-";
+      document.getElementById("infoEmergency").textContent = d.emergencyContact || "-";
+      document.getElementById("infoEmail").textContent = d.email || "-";
+      document.getElementById("infoAddress").textContent = d.address || "-";
+      document.getElementById("infoBlood").textContent = d.bloodGroup || "-";
+      document.getElementById("infoCaste").textContent = d.caste || "-";
+      document.getElementById("infoEducation").textContent = d.education || "-";
+      document.getElementById("infoMotherTongue").textContent = d.motherTongue || "-";
+      document.getElementById("infoOccupation").textContent = d.occupation || "-";
+      document.getElementById("infoAadhaar").textContent = d.aadhaar || "-";
+      document.getElementById("infoIncome").textContent = d.familyIncome || "-";
+      document.getElementById("infoBpl").textContent = d.bplNumber || "-";
+      document.getElementById("infoAbha").textContent = d.abha || "-";
+      document.getElementById("infoEsi").textContent = d.esi || "-";
+      document.getElementById("infoVajpayee").textContent = d.vajpayee || "-";
+    });
+
+    const langs = ["en", "hi", "kn"];
+    let currentLang = localStorage.getItem("humanLang") || "en";
+    function cycleLanguage() {
+      const next = (langs.indexOf(currentLang) + 1) % langs.length;
+      currentLang = langs[next];
+      localStorage.setItem("humanLang", currentLang);
+      location.reload();
+    }
+  </script>
+</body>
+</html>
