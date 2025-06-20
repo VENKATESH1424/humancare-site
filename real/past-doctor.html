@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Past Doctor Visits - Human Care</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      overflow-x: hidden;
+    }
+    .background-icons {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .background-icons .icon {
+      position: absolute;
+      font-size: 28px;
+      color: rgba(0, 0, 0, 0.05);
+      animation: float 12s linear infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-100vh); }
+    }
+    header {
+      background: #fff;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: relative;
+      z-index: 2;
+    }
+    .header-title {
+      font-weight: bold;
+      font-size: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-title img {
+      height: 40px;
+    }
+    .human-id {
+      font-weight: bold;
+      color: #555;
+    }
+    .back-button {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #3a7bfd;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 50px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .visit-list {
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 16px 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .visit-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 16px;
+    }
+    .visit-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .visit-card .meta {
+      font-size: 14px;
+      color: #555;
+    }
+    .view-btn {
+      margin-top: 12px;
+      background: #3a7bfd;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-icons">
+    <i class="fas fa-heartbeat icon" style="top: 10%; left: 15%; animation-delay: 0s;"></i>
+    <i class="fas fa-user-md icon" style="top: 30%; left: 80%; animation-delay: 2s;"></i>
+    <i class="fas fa-pills icon" style="top: 50%; left: 30%; animation-delay: 4s;"></i>
+    <i class="fas fa-syringe icon" style="top: 70%; left: 70%; animation-delay: 6s;"></i>
+    <i class="fas fa-stethoscope icon" style="top: 90%; left: 50%; animation-delay: 8s;"></i>
+  </div>
+
+  <header>
+    <div class="header-title">
+      <img src="assets/human-logo.png" alt="Human Logo">
+      <span>Past Doctor Visits</span>
+    </div>
+    <div class="human-id" id="humanNumberDisplay">HN-XX-XXXXXX</div>
+  </header>
+
+  <div class="visit-list" id="visitList"></div>
+
+  <button class="back-button" onclick="location.href='doctor.html'">⬅ Back</button>
+
+  <script>
+    const visits = [
+      {
+        doctor: "Dr. Priya Nair",
+        date: "2025-05-12",
+        location: "City Heart Clinic, Bangalore",
+        summary: "Consulted for chest pain, advised ECG and rest.",
+        prescriptionLink: "#"
+      },
+      {
+        doctor: "Dr. Arvind Kumar",
+        date: "2025-03-28",
+        location: "Govt Hospital, Mysuru",
+        summary: "General fever and cold, prescribed antibiotics.",
+        prescriptionLink: "#"
+      }
+    ];
+
+    function renderVisits() {
+      const container = document.getElementById("visitList");
+      container.innerHTML = "";
+      visits.forEach(v => {
+        const card = document.createElement("div");
+        card.className = "visit-card";
+        card.innerHTML = `
+          <h3>${v.doctor}</h3>
+          <div class="meta">
+            <p>📅 ${v.date}</p>
+            <p>📍 ${v.location}</p>
+            <p>📝 ${v.summary}</p>
+          </div>
+          <button class="view-btn" onclick="location.href='${v.prescriptionLink}'">View Prescription</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    window.onload = () => {
+      document.getElementById("humanNumberDisplay").textContent = localStorage.getItem("humanNumber") || "HN-XX-XXXXXX";
+      renderVisits();
+    };
+  </script>
+</body>
+</html>
