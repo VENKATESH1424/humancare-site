@@ -1,0 +1,207 @@
+<!-- Final version with 30 departments, grouped into 3 categories -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Departments | Human Care</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+    }
+    .background-icons {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .background-icons .icon {
+      position: absolute;
+      font-size: 28px;
+      color: rgba(0, 0, 0, 0.05);
+      animation: float 12s linear infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-100vh); }
+    }
+    header {
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #3a3a3a;
+    }
+    .sidebar {
+      width: 250px;
+      background: #ffffff;
+      position: fixed;
+      top: 0;
+      left: -250px;
+      height: 100vh;
+      box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+      padding-top: 60px;
+      transition: left 0.3s ease;
+      z-index: 3;
+    }
+    .sidebar.active { left: 0; }
+    .sidebar a {
+      display: block;
+      padding: 12px 24px;
+      text-decoration: none;
+      color: #444;
+      border-bottom: 1px solid #eee;
+    }
+    .sidebar a:hover { background-color: #f2f2f2; }
+    .sidebar-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
+    }
+    .hamburger {
+      font-size: 20px;
+      cursor: pointer;
+      position: absolute;
+      left: 20px;
+      top: 22px;
+      z-index: 4;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+    .section h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+      color: #333;
+    }
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+    .tile {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      text-align: center;
+      font-weight: 500;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+    .tile:hover { transform: translateY(-5px); }
+    .tile i {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #3a7bfd;
+    }
+    @media (max-width: 600px) {
+      header h1 { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-icons">
+    <i class="fas fa-heartbeat icon" style="top: 10%; left: 15%; animation-delay: 0s;"></i>
+    <i class="fas fa-user-md icon" style="top: 30%; left: 80%; animation-delay: 2s;"></i>
+    <i class="fas fa-pills icon" style="top: 50%; left: 30%; animation-delay: 4s;"></i>
+    <i class="fas fa-syringe icon" style="top: 70%; left: 70%; animation-delay: 6s;"></i>
+    <i class="fas fa-stethoscope icon" style="top: 90%; left: 50%; animation-delay: 8s;"></i>
+  </div>
+
+  <div class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+
+  <header>
+    <h1>Select a Medical Department</h1>
+  </header>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></div>
+    <a href="#">About Us</a>
+    <a href="#">Contact Us</a>
+    <a href="#">Terms & Conditions</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Logout</a>
+  </div>
+
+  <div class="container">
+    <div class="section">
+      <h2>🏥 Core Clinical Departments</h2>
+      <div class="tile-grid">
+        <div class="tile"><i class="fas fa-notes-medical"></i><br>General Medicine</div>
+        <div class="tile"><i class="fas fa-heartbeat"></i><br>Cardiology</div>
+        <div class="tile"><i class="fas fa-brain"></i><br>Neurology</div>
+        <div class="tile"><i class="fas fa-bone"></i><br>Orthopedics</div>
+        <div class="tile"><i class="fas fa-lungs"></i><br>Pulmonology</div>
+        <div class="tile"><i class="fas fa-utensils"></i><br>Gastroenterology</div>
+        <div class="tile"><i class="fas fa-vial"></i><br>Nephrology</div>
+        <div class="tile"><i class="fas fa-dna"></i><br>Endocrinology</div>
+        <div class="tile"><i class="fas fa-user-nurse"></i><br>Dermatology</div>
+        <div class="tile"><i class="fas fa-eye"></i><br>Ophthalmology</div>
+        <div class="tile"><i class="fas fa-ear-listen"></i><br>ENT</div>
+        <div class="tile"><i class="fas fa-restroom"></i><br>Urology</div>
+        <div class="tile"><i class="fas fa-brain"></i><br>Psychiatry</div>
+        <div class="tile"><i class="fas fa-child"></i><br>Pediatrics</div>
+        <div class="tile"><i class="fas fa-female"></i><br>Gynecology / Obstetrics</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🧪 Diagnostics & Support</h2>
+      <div class="tile-grid">
+        <div class="tile"><i class="fas fa-vials"></i><br>Pathology / Lab</div>
+        <div class="tile"><i class="fas fa-x-ray"></i><br>Radiology / Imaging</div>
+        <div class="tile"><i class="fas fa-ribbon"></i><br>Oncology</div>
+        <div class="tile"><i class="fas fa-syringe"></i><br>Anesthesiology</div>
+        <div class="tile"><i class="fas fa-procedures"></i><br>Critical Care / ICU</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🧑‍⚕️ Specialties & Super-Specialties</h2>
+      <div class="tile-grid">
+        <div class="tile"><i class="fas fa-dumbbell"></i><br>Rheumatology</div>
+        <div class="tile"><i class="fas fa-tint"></i><br>Hematology</div>
+        <div class="tile"><i class="fas fa-virus"></i><br>Infectious Diseases</div>
+        <div class="tile"><i class="fas fa-shield-virus"></i><br>Immunology / Allergy</div>
+        <div class="tile"><i class="fas fa-blind"></i><br>Geriatrics</div>
+        <div class="tile"><i class="fas fa-syringe"></i><br>Plastic Surgery</div>
+        <div class="tile"><i class="fas fa-baby"></i><br>Neonatology</div>
+        <div class="tile"><i class="fas fa-tooth"></i><br>Dentistry</div>
+        <div class="tile"><i class="fas fa-heart"></i><br>Sexual Health</div>
+        <div class="tile"><i class="fas fa-bed"></i><br>Sleep Medicine</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('active');
+    }
+  </script>
+</body>
+</html>
