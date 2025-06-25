@@ -5,6 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Doctor Login - Human Care</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
+      authDomain: "humancare-web1.firebaseapp.com",
+      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com",
+      projectId: "humancare-web1",
+      storageBucket: "humancare-web1.appspot.com",
+      messagingSenderId: "986623782553",
+      appId: "1:986623782553:web:fd3cd6c363bb8390be1208",
+      measurementId: "G-NFH96JNR72"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("doctorLoginForm");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const doctorId = document.getElementById("doctorId").value.trim();
+        const password = document.getElementById("doctorPassword").value;
+
+        try {
+          const q = query(collection(db, "doctors"), where("doctorNumber", "==", doctorId));
+          const snapshot = await getDocs(q);
+
+          if (snapshot.empty) {
+            alert("Doctor ID not found");
+            return;
+          }
+
+          const doc = snapshot.docs[0];
+          const data = doc.data();
+
+          if (data.password === password) {
+            localStorage.setItem("doctorId", doctorId);
+            localStorage.setItem("doctorName", data.name);
+            localStorage.setItem("specializations", JSON.stringify(data.specializations));
+            window.location.href = "doctor-dashboard.html";
+          } else {
+            alert("Invalid Password");
+          }
+        } catch (error) {
+          console.error("Login Error:", error);
+          alert("An error occurred. Please try again later.");
+        }
+      });
+    });
+  </script>
   <style>
     body {
       margin: 0;
@@ -144,26 +196,5 @@
   </div>
 
   <footer>© 2025 HomosaP Healthcare Pvt Ltd. All rights reserved.</footer>
-
-  <script>
-    document.getElementById("doctorLoginForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const doctorId = document.getElementById("doctorId").value.trim();
-      const password = document.getElementById("doctorPassword").value;
-
-      // Temporary credentials for testing
-      const tempUsers = {
-        "DR001": "doctor123",
-        "DR002": "test456"
-      };
-
-      if (tempUsers[doctorId] && tempUsers[doctorId] === password) {
-        localStorage.setItem("doctorId", doctorId);
-        window.location.href = "doctor-dashboard.html";
-      } else {
-        alert("Invalid Doctor ID or Password");
-      }
-    });
-  </script>
 </body>
 </html>
