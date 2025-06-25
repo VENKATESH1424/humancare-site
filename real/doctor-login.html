@@ -46,7 +46,8 @@
             localStorage.setItem("doctorId", doctorId);
             localStorage.setItem("doctorName", data.name);
             localStorage.setItem("specializations", JSON.stringify(data.specializations));
-            window.location.href = "doctor-dashboard.html";
+            localStorage.setItem("hospitals", JSON.stringify(data.hospitals));
+            showPopup(data);
           } else {
             alert("Invalid Password");
           }
@@ -55,6 +56,23 @@
           alert("An error occurred. Please try again later.");
         }
       });
+
+      function showPopup(data) {
+        const popup = document.getElementById("hospitalSpecPopup");
+        const hospitalSelect = document.getElementById("popupHospital");
+        const specializationSelect = document.getElementById("popupSpecialization");
+        popup.style.display = "flex";
+        hospitalSelect.innerHTML = data.hospitals.map(h => `<option value="${h}">${h}</option>`).join('');
+        specializationSelect.innerHTML = data.specializations.map(s => `<option value="${s}">${s}</option>`).join('');
+
+        document.getElementById("savePopupSelection").onclick = () => {
+          const selectedHospital = hospitalSelect.value;
+          const selectedSpecialization = specializationSelect.value;
+          localStorage.setItem("activeHospital", selectedHospital);
+          localStorage.setItem("activeSpecialization", selectedSpecialization);
+          window.location.href = "doctor-dashboard.html";
+        };
+      }
     });
   </script>
   <style>
@@ -166,6 +184,36 @@
       font-size: 13px;
       color: #555;
     }
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 99;
+    }
+    .popup-box {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 300px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .popup-box h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    .popup-box select, .popup-box button {
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -196,5 +244,14 @@
   </div>
 
   <footer>© 2025 HomosaP Healthcare Pvt Ltd. All rights reserved.</footer>
+
+  <div class="popup" id="hospitalSpecPopup">
+    <div class="popup-box">
+      <h3>Select Today's Hospital & Specialization</h3>
+      <select id="popupHospital"></select>
+      <select id="popupSpecialization"></select>
+      <button id="savePopupSelection">Continue</button>
+    </div>
+  </div>
 </body>
 </html>
