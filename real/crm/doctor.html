@@ -32,6 +32,31 @@
       "Plastic Surgery", "Neonatology", "Dentistry", "Sexual Health", "Sleep Medicine"
     ];
 
+    async function generateUniqueDoctorNumber(stateCode) {
+      let isUnique = false;
+      let docNumber = "";
+      while (!isUnique) {
+        const randomNum = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+        docNumber = `DN-${stateCode}-${randomNum}`;
+        const q = query(collection(db, "doctors"), where("doctorNumber", "==", docNumber));
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) {
+          isUnique = true;
+        }
+      }
+      return docNumber;
+    }
+
+    window.generateDoctorNumber = async function () {
+      const state = document.getElementById('doc-state').value.trim().toUpperCase();
+      if (!state || state.length !== 2) {
+        alert("Enter valid 2-letter state code first.");
+        return;
+      }
+      const docNumber = await generateUniqueDoctorNumber(state);
+      document.getElementById('doc-number').value = docNumber;
+    }
+
     window.saveDoctor = async function () {
       const name = document.getElementById('doc-name').value.trim();
       const email = document.getElementById('doc-email').value.trim();
@@ -40,18 +65,14 @@
       const hospitals = document.getElementById('doc-hospitals').value.split(',').map(h => h.trim());
       const tags = Array.from(document.querySelectorAll('.tag')).map(tag => tag.textContent.replace('×', '').trim());
       const password = document.getElementById('doc-password').value;
+      const docNumber = document.getElementById('doc-number').value.trim();
 
-      if (!name || !email || !mobile || !state || !hospitals || tags.length === 0 || !password) {
+      if (!name || !email || !mobile || !state || !hospitals || tags.length === 0 || !password || !docNumber) {
         alert("Please fill all fields.");
         return;
       }
 
       try {
-        const q = query(collection(db, "doctors"), where("state", "==", state));
-        const snapshot = await getDocs(q);
-        const count = snapshot.size + 1;
-        const docNumber = `DN-${state}-${String(count).padStart(4, '0')}`;
-
         await createUserWithEmailAndPassword(auth, email, password);
 
         await addDoc(collection(db, "doctors"), {
@@ -130,6 +151,8 @@
     .tag .remove { margin-left: 8px; cursor: pointer; color: #fff; }
     .suggestion { background: #f0f0f0; padding: 8px; cursor: pointer; margin-top: 2px; border-radius: 6px; }
     .suggestion:hover { background: #e0e0e0; }
+    .gen-btn { margin-top: 8px; padding: 6px 12px; background: #ddd; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    .gen-btn:hover { background: #ccc; }
   </style>
 </head>
 <body>
@@ -147,6 +170,12 @@
 
       <label>State Code</label>
       <input type="text" id="doc-state" maxlength="2" placeholder="KA, MH, TN" oninput="this.value=this.value.toUpperCase()" />
+
+      <label>Generate Doctor Number</label>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <input type="text" id="doc-number" readonly placeholder="Click generate" />
+        <button type="button" class="gen-btn" onclick="generateDoctorNumber()">Generate</button>
+      </div>
 
       <label>Hospitals (comma-separated)</label>
       <input type="text" id="doc-hospitals" placeholder="e.g. Apollo, Fortis" />
