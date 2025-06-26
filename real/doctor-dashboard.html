@@ -57,158 +57,35 @@
         lastActive: new Date().toISOString()
       });
 
+      document.getElementById("activeSelectionDisplay").textContent = `${hospital} / ${specialization}`;
       alert("Selection updated.");
       document.getElementById("selectionModal").style.display = "none";
     };
   </script>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #e3f2fd, #fce4ec);
-      overflow-x: hidden;
-    }
-    .background-icons {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-    .background-icons .icon {
-      position: absolute;
-      font-size: 28px;
-      color: rgba(0, 0, 0, 0.05);
-      animation: float 12s linear infinite;
-    }
-    @keyframes float {
-      0% { transform: translateY(100vh); }
-      100% { transform: translateY(-100vh); }
-    }
-    header {
-      background: #fff;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      position: relative;
-      z-index: 2;
-    }
-    .hamburger {
-      font-size: 20px;
-      cursor: pointer;
-    }
-    .header-title {
-      font-weight: bold;
-      font-size: 20px;
-      color: #333;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .header-title img {
-      height: 40px;
-    }
-    .doctor-id {
-      font-weight: bold;
-      color: #555;
-    }
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -240px;
-      height: 100vh;
-      width: 220px;
-      background: #fff;
-      box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
-      z-index: 3;
-      padding-top: 80px;
-      transition: left 0.3s ease;
-    }
-    .sidebar.active {
-      left: 0;
-    }
-    .sidebar a {
-      display: block;
-      padding: 14px 24px;
-      color: #333;
-      text-decoration: none;
-      border-bottom: 1px solid #eee;
-    }
-    .sidebar a:hover {
-      background-color: #f0f0f0;
-    }
-    .sidebar-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      font-size: 20px;
-      cursor: pointer;
-      color: #333;
-    }
-    .dashboard {
-      margin-left: 240px;
-      max-width: 960px;
-      padding: 40px 16px 60px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-      position: relative;
-      z-index: 1;
-    }
-    .tile {
-      background: #fff;
-      padding: 24px 16px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      font-size: 16px;
-      font-weight: 500;
-      transition: transform 0.3s ease;
-      cursor: pointer;
-      text-align: center;
-    }
-    .tile:hover {
-      transform: translateY(-5px);
-    }
-    .tile i {
-      font-size: 28px;
-      margin-bottom: 12px;
-      color: #3a7bfd;
-    }
-    #selectionModal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.4);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-    #selectionModal .modal-box {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      text-align: center;
-      min-width: 300px;
-    }
-    #selectionModal select {
-      width: 100%;
-      margin: 10px 0;
-      padding: 8px;
-      font-size: 16px;
-    }
-    #selectionModal button {
-      padding: 10px 20px;
-      background: #3a7bfd;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      margin-top: 10px;
-    }
+    body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(to right, #e3f2fd, #fce4ec); overflow-x: hidden; }
+    .background-icons { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+    .background-icons .icon { position: absolute; font-size: 28px; color: rgba(0, 0, 0, 0.05); animation: float 12s linear infinite; }
+    @keyframes float { 0% { transform: translateY(100vh); } 100% { transform: translateY(-100vh); } }
+    header { background: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; z-index: 2; }
+    .hamburger { font-size: 20px; cursor: pointer; }
+    .header-title { font-weight: bold; font-size: 20px; color: #333; display: flex; align-items: center; gap: 10px; }
+    .header-title img { height: 40px; }
+    .doctor-id { font-weight: bold; color: #555; }
+    .active-selection { font-size: 14px; color: #888; margin-left: 10px; }
+    .sidebar { position: fixed; top: 0; left: -240px; height: 100vh; width: 220px; background: #fff; box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1); z-index: 3; padding-top: 80px; transition: left 0.3s ease; }
+    .sidebar.active { left: 0; }
+    .sidebar a { display: block; padding: 14px 24px; color: #333; text-decoration: none; border-bottom: 1px solid #eee; }
+    .sidebar a:hover { background-color: #f0f0f0; }
+    .sidebar-close { position: absolute; top: 16px; right: 16px; font-size: 20px; cursor: pointer; color: #333; }
+    .dashboard { margin-left: 240px; max-width: 960px; padding: 40px 16px 60px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; position: relative; z-index: 1; }
+    .tile { background: #fff; padding: 24px 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 16px; font-weight: 500; transition: transform 0.3s ease; cursor: pointer; text-align: center; }
+    .tile:hover { transform: translateY(-5px); }
+    .tile i { font-size: 28px; margin-bottom: 12px; color: #3a7bfd; }
+    #selectionModal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 999; }
+    #selectionModal .modal-box { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center; min-width: 300px; }
+    #selectionModal select { width: 100%; margin: 10px 0; padding: 8px; font-size: 16px; }
+    #selectionModal button { padding: 10px 20px; background: #3a7bfd; color: white; border: none; border-radius: 8px; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -226,7 +103,10 @@
       <img src="assets/human-logo.png" alt="Human Logo">
       <span>Doctor Dashboard</span>
     </div>
-    <div class="doctor-id" id="doctorIdDisplay">DR-XX-XXXX</div>
+    <div>
+      <div class="doctor-id" id="doctorIdDisplay">DR-XX-XXXX</div>
+      <div class="active-selection" id="activeSelectionDisplay">Not Selected</div>
+    </div>
   </header>
 
   <div class="sidebar" id="sidebar">
