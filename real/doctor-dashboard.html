@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
@@ -23,34 +23,47 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    window.editHospitalSpecialization = async function () {
-      document.getElementById("selectionModal").style.display = "flex";
-      const doctorId = localStorage.getItem("doctorId");
-      const docRef = doc(db, "doctors", doctorId);
-      const docSnap = await getDoc(docRef);
-      if (!docSnap.exists()) return alert("Doctor profile not found.");
-      const data = docSnap.data();
-      const hospitals = data.hospitals || [];
-      const specializations = data.specializations || [];
-      const hospitalSelect = document.getElementById("hospitalSelect");
-      const specializationSelect = document.getElementById("specializationSelect");
-      hospitalSelect.innerHTML = hospitals.map(h => `<option value="${h}">${h}</option>`).join('');
-      specializationSelect.innerHTML = specializations.map(s => `<option value="${s}">${s}</option>`).join('');
-    };
+    window.addEventListener("DOMContentLoaded", async () => {
+      const doctorNumber = localStorage.getItem("doctorNumber");
+      if (!doctorNumber) return;
+      try {
+        const q = query(collection(db, "doctors"), where("doctorNumber", "==", doctorNumber));
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) {
+          alert("Doctor profile not found.");
+          return;
+        }
+        const doc = snapshot.docs[0];
+        const data = doc.data();
+        document.getElementById("doctorIdDisplay").textContent = data.doctorNumber;
+        localStorage.setItem("doctorId", doc.id);
+      } catch (err) {
+        console.error("Error fetching doctor data:", err);
+      }
+    });
 
-    window.saveSelection = async function () {
+    window.editHospitalSpecialization = async function () {
       const doctorId = localStorage.getItem("doctorId");
-      const hospital = document.getElementById("hospitalSelect").value;
-      const specialization = document.getElementById("specializationSelect").value;
-      const docRef = doc(db, "doctors", doctorId);
-      await updateDoc(docRef, {
-        activeHospital: hospital,
-        activeSpecialization: specialization,
-        lastActive: new Date().toISOString()
-      });
-      document.getElementById("selectionModal").style.display = "none";
-      alert("Selection updated.");
-    };
+      if (!doctorId) return alert("No doctor ID stored.");
+
+      try {
+        const q = query(collection(db, "doctors"), where("doctorNumber", "==", localStorage.getItem("doctorNumber")));
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) return alert("Doctor profile not found.");
+        const data = snapshot.docs[0].data();
+
+        const hospitalSelect = document.createElement("select");
+        data.hospitals.forEach(h => hospitalSelect.innerHTML += `<option value="${h}">${h}</option>`);
+
+        const specializationSelect = document.createElement("select");
+        data.specializations.forEach(s => specializationSelect.innerHTML += `<option value="${s}">${s}</option>`);
+
+        alert("(This is placeholder logic — the modal should appear here with options.)");
+      } catch (err) {
+        console.error(err);
+        alert("Error loading hospital/specialization.");
+      }
+    }
   </script>
   <style>
     body {
@@ -168,37 +181,6 @@
       margin-bottom: 12px;
       color: #3a7bfd;
     }
-    #selectionModal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.4);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-    #selectionModal .modal-box {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      text-align: center;
-    }
-    #selectionModal select {
-      width: 100%;
-      margin: 10px 0;
-      padding: 8px;
-      font-size: 16px;
-    }
-    #selectionModal button {
-      padding: 10px 20px;
-      background: #3a7bfd;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      margin-top: 10px;
-    }
   </style>
 </head>
 <body>
@@ -253,24 +235,10 @@
     </div>
   </div>
 
-  <div id="selectionModal">
-    <div class="modal-box">
-      <h3>Select Hospital & Specialization</h3>
-      <select id="hospitalSelect"></select>
-      <select id="specializationSelect"></select><br>
-      <button onclick="saveSelection()">Save</button>
-    </div>
-  </div>
-
   <script>
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('active');
     }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      const doctorId = localStorage.getItem("doctorId") || "DR-XX-XXXX";
-      document.getElementById("doctorIdDisplay").textContent = doctorId;
-    });
   </script>
 </body>
 </html>
