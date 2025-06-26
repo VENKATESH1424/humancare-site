@@ -175,42 +175,15 @@
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
-      authDomain: "humancare-web1.firebaseapp.com",
-      projectId: "humancare-web1",
-      storageBucket: "humancare-web1.appspot.com",
-      messagingSenderId: "986623782553",
-      appId: "1:986623782553:web:fd3cd6c363bb8390be1208",
-      measurementId: "G-NFH96JNR72"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
+  <script>
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('active');
     }
 
-    window.onload = async () => {
-      const doctorId = localStorage.getItem("doctorId");
-      if (!doctorId) return;
-
-      try {
-        const docRef = doc(db, "doctors", doctorId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          document.getElementById("doctorIdDisplay").textContent = data.doctorNumber || "DR-XX-XXXX";
-        }
-      } catch (err) {
-        console.error("Error fetching doctor data:", err);
-      }
-    };
+    window.addEventListener("DOMContentLoaded", () => {
+      const doctorId = localStorage.getItem("doctorId") || "DR-XX-XXXX";
+      document.getElementById("doctorIdDisplay").textContent = doctorId;
+    });
   </script>
 </body>
 </html>
