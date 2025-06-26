@@ -24,13 +24,16 @@
     const db = getFirestore(app);
 
     window.editHospitalSpecialization = async function () {
-      const doctorNumber = localStorage.getItem("doctorId");
+      const doctorNumber = sessionStorage.getItem("activeDoctorNumber") || localStorage.getItem("doctorId");
+      if (!doctorNumber) return alert("Doctor ID not found in session.");
       const q = query(collection(db, "doctors"), where("doctorNumber", "==", doctorNumber));
       const snapshot = await getDocs(q);
       if (snapshot.empty) return alert("Doctor profile not found.");
+
       const docData = snapshot.docs[0].data();
       const docRefId = snapshot.docs[0].id;
-      localStorage.setItem("doctorDocRef", docRefId);
+      sessionStorage.setItem("doctorDocRef", docRefId);
+
       const hospitals = docData.hospitals || [];
       const specializations = docData.specializations || [];
 
@@ -44,7 +47,7 @@
     };
 
     window.saveSelection = async function () {
-      const docId = localStorage.getItem("doctorDocRef");
+      const docId = sessionStorage.getItem("doctorDocRef");
       const hospital = document.getElementById("hospitalSelect").value;
       const specialization = document.getElementById("specializationSelect").value;
 
@@ -121,7 +124,7 @@
     <a href="#">Contact Us</a>
     <a href="#">Terms & Conditions</a>
     <a href="#">Privacy Policy</a>
-    <a href="#">Logout</a>
+    <a href="#" onclick="logout()">Logout</a>
   </div>
 
   <div class="dashboard">
@@ -158,9 +161,15 @@
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-      const doctorId = localStorage.getItem("doctorId") || "DR-XX-XXXX";
+      const doctorId = sessionStorage.getItem("activeDoctorNumber") || localStorage.getItem("doctorId") || "DR-XX-XXXX";
       document.getElementById("doctorIdDisplay").textContent = doctorId;
     });
+
+    function logout() {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = "doctor-login.html";
+    }
   </script>
 </body>
 </html>
