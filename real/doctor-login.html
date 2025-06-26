@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
@@ -39,14 +39,12 @@
             return;
           }
 
-          const doc = snapshot.docs[0];
-          const data = doc.data();
+          const docSnap = snapshot.docs[0];
+          const data = docSnap.data();
 
           if (data.password === password) {
-            localStorage.setItem("doctorId", doctorId);
-            localStorage.setItem("doctorName", data.name);
-            localStorage.setItem("specializations", JSON.stringify(data.specializations));
-            localStorage.setItem("hospitals", JSON.stringify(data.hospitals));
+            sessionStorage.setItem("activeDoctorNumber", doctorId);
+            sessionStorage.setItem("doctorDocRef", docSnap.id);
             showPopup(data);
           } else {
             alert("Invalid Password");
@@ -65,11 +63,20 @@
         hospitalSelect.innerHTML = data.hospitals.map(h => `<option value="${h}">${h}</option>`).join('');
         specializationSelect.innerHTML = data.specializations.map(s => `<option value="${s}">${s}</option>`).join('');
 
-        document.getElementById("savePopupSelection").onclick = () => {
+        document.getElementById("savePopupSelection").onclick = async () => {
           const selectedHospital = hospitalSelect.value;
           const selectedSpecialization = specializationSelect.value;
-          localStorage.setItem("activeHospital", selectedHospital);
-          localStorage.setItem("activeSpecialization", selectedSpecialization);
+
+          const docRefId = sessionStorage.getItem("doctorDocRef");
+          if (!docRefId) return alert("Doctor reference missing");
+
+          const docRef = doc(db, "doctors", docRefId);
+          await updateDoc(docRef, {
+            activeHospital: selectedHospital,
+            activeSpecialization: selectedSpecialization,
+            lastActive: new Date().toISOString()
+          });
+
           window.location.href = "doctor-dashboard.html";
         };
       }
