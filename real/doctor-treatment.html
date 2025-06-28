@@ -192,6 +192,8 @@
     const state = document.getElementById("stateCode").value.toUpperCase();
     const uid = document.getElementById("uniqueId").value.toUpperCase();
     const humanNumber = `HN-${state}-${uid}`;
+console.log("Looking for document:", humanNumber);
+
 
     if (!state || !uid) return alert("Please enter a valid Human Number.");
 
@@ -209,10 +211,10 @@
         alert("❌ Human not found.");
       }
     }).catch(err => {
-      console.error("Error fetching Human:", err);
-      alert("Error fetching Human data.");
-    });
-  }
+  console.error("Error fetching Human:", err);
+  alert("Error fetching Human data:\n" + err.message);
+});
+
 
   function cancelAccess() {
     document.getElementById("resultBox").style.display = "none";
