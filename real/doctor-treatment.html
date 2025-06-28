@@ -170,9 +170,10 @@
       }
     })
     .catch(err => {
-      console.error("SMS error:", err);
-      alert("❌ SMS sending failed.");
-    });
+  console.error("SMS error:", err);
+  alert("❌ SMS sending failed.\n\n" + err.message);
+});
+
   }
 </script>
 </body>
