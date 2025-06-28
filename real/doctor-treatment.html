@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-functions-compat.js"></script>
   <style>
     body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(to right, #f4f6f9, #eef2f5); overflow-x: hidden; position: relative; }
     .background-icons { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
@@ -85,13 +84,12 @@
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
-      authDomain: "humancare-web1.firebaseapp.com",
-      projectId: "humancare-web1",
-      appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
+    authDomain: "humancare-web1.firebaseapp.com",
+    projectId: "humancare-web1",
+    appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
-  const functions = firebase.functions();
 
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
@@ -143,27 +141,38 @@
   function confirmAccess() {
     const doctorName = localStorage.getItem("doctorName") || "Dr. HumanCare";
     const translations = {
-      hi: `आपके रिकॉर्ड ${doctorName} द्वारा Human Care के माध्यम से एक्सेस किए गए...`,
-      kn: `${doctorName} ಮೂಲಕ ನಿಮ್ಮ ದಾಖಲಾತಿಗಳನ್ನು Human Care ಮೂಲಕ ಪ್ರವೇಶಿಸಲಾಗಿದೆ...`,
-      ta: `${doctorName} மூலமாக உங்கள் மருத்துவ பதிவுகள் Human Care மூலம் அணுகப்பட்டுள்ளன...`,
-      te: `${doctorName} ద్వారా మీ రికార్డులు Human Care ద్వారా యాక్సెస్ చేయబడ్డాయి...`,
-      ml: `${doctorName} നിങ്ങളുടെ റെക്കോർഡുകൾ Human Care വഴി ആക്സസ് ചെയ്തു...`,
-      mr: `${doctorName} यांनी तुमचे रेकॉर्ड Human Care द्वारे पाहिले आहेत...`,
-      bn: `${doctorName} দ্বারা আপনার রেকর্ডগুলি Human Care-এর মাধ্যমে অ্যাক্সেস করা হয়েছে...`
+      hi: `आपके रिकॉर्ड ${doctorName} द्वारा Human Care के माध्यम से एक्सेस किए गए हैं। यदि यह आपकी अनुमति के बिना हुआ है, तो कृपया Human Care से संपर्क करें।`,
+      kn: `${doctorName} ಮೂಲಕ ನಿಮ್ಮ ದಾಖಲಾತಿಗಳನ್ನು Human Care ಮೂಲಕ ಪ್ರವೇಶಿಸಲಾಗಿದೆ. ನೀವು ಅನುಮತಿ ನೀಡದಿದ್ದರೆ, Human Care ಅನ್ನು ಸಂಪರ್ಕಿಸಿ.`,
+      ta: `${doctorName} மூலமாக உங்கள் மருத்துவ பதிவுகள் Human Care மூலம் அணுகப்பட்டுள்ளன. இது உங்கள் ஒப்புதலின்றி நிகழ்ந்திருந்தால், தயவுசெய்து Human Care ஐ அணுகவும்.`,
+      te: `${doctorName} ద్వారా మీ రికార్డులు Human Care ద్వారా యాక్సెస్ చేయబడ్డాయి. ఇది మీ అనుమతి లేకుండా జరిగిందయితే, దయచేసి Human Careని సంప్రదించండి.`,
+      ml: `${doctorName} നിങ്ങളുടെ റെക്കോർഡുകൾ Human Care വഴി ആക്സസ് ചെയ്തു. നിങ്ങൾ സമ്മതം നൽകിയിട്ടില്ലെങ്കിൽ, Human Careനെ സമീപിക്കുക.`,
+      mr: `${doctorName} यांनी तुमचे रेकॉर्ड Human Care द्वारे पाहिले आहेत. हे तुमच्या संमतीशिवाय झाले असल्यास, कृपया Human Care शी संपर्क साधा.`,
+      bn: `${doctorName} দ্বারা আপনার রেকর্ডগুলি Human Care-এর মাধ্যমে অ্যাক্সেস করা হয়েছে। এটি যদি আপনার সম্মতি ছাড়াই হয়ে থাকে, তবে দয়া করে Human Care-এ যোগাযোগ করুন।`
     };
     const english = `Your records were accessed by ${doctorName} via Human Care. If there was no consent from your side, please contact Human Care customer care.`;
     const native = translations[fetchedLang] || "";
     const finalMessage = `${english}\n\n${native}`;
 
-    const sendSMS = functions.httpsCallable("sendSMS");
-    sendSMS({ phone: fetchedPhone, message: finalMessage }).then(() => {
-      document.getElementById("successMessage").style.display = "block";
-    }).catch(err => {
+    fetch("http://192.168.1.39:5000/send-sms", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ number: fetchedPhone, message: finalMessage })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        document.getElementById("successMessage").style.display = "block";
+        setTimeout(() => {
+          window.location.href = "actual-treatment.html";
+        }, 1500);
+      } else {
+        alert("❌ SMS sending failed. Please check server.");
+      }
+    })
+    .catch(err => {
       console.error("SMS error:", err);
-      alert("Failed to send SMS");
+      alert("❌ SMS sending failed.");
     });
-
-    setTimeout(() => { window.location.href = "actual-treatment.html"; }, 1500);
   }
 </script>
 </body>
