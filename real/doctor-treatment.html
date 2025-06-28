@@ -121,6 +121,7 @@
     db.collection("humans").doc(humanNumber).get().then(doc => {
       if (doc.exists) {
         const data = doc.data();
+        console.log("Fetched Data:", data);  // Add this line
         fetchedName = data.name;
         fetchedPhone = data.phone;
         fetchedLang = mapMotherTongue(data.motherTongue);
