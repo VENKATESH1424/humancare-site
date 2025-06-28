@@ -149,7 +149,7 @@
     <button class="btn" onclick="searchHuman()">Search</button>
   </div>
   <div class="result-box" id="resultBox">
-    <p><strong>Name:</strong> <span id="humanName">N/A</span></p>
+    <p><strong>Name:</strong> <span id="humanname">N/A</span></p>
     <p><strong>Phone:</strong> <span id="humanPhone">+91-••••••••••</span></p>
     <p>⚠️ Do you want to proceed and access this Human’s records?</p>
     <div class="confirm-btns">
@@ -202,7 +202,7 @@
         fetchedPhone = data.phone || "0000000000";
         fetchedLang = mapMotherTongue(data.motherTongue || "");
 
-        document.getElementById("humanName").textContent = fetchedName;
+        document.getElementById("name").textContent = fetchedName;
         document.getElementById("humanPhone").textContent = fetchedPhone.replace(/(\d{2})\d{5}(\d{3})/, "$1•••••$2");
         document.getElementById("resultBox").style.display = "block";
       } else {
