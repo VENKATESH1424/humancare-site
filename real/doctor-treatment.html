@@ -65,7 +65,6 @@
 <div class="container">
   <h2>Search Human Records</h2>
   <div class="human-input">
-    <input type="text" value="HN" readonly />
     <input type="text" id="stateCode" maxlength="2" placeholder="State" />
     <input type="text" id="uniqueId" maxlength="6" placeholder="ID" />
     <button class="btn" onclick="searchHuman()">Search</button>
@@ -113,7 +112,8 @@
 function searchHuman() {
   const state = document.getElementById("stateCode").value.toUpperCase();
   const uid = document.getElementById("uniqueId").value.toUpperCase();
-  const humanNumber = `HN-${state}-${uid}`;
+const humanNumber = `HN-${state}-${uid}`; // ✅ Keep this format internally
+
 
   console.log("Searching Human Number:", humanNumber);
 
