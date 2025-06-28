@@ -110,30 +110,38 @@
     };
     return map[tongue?.toLowerCase()] || "en";
   }
+function searchHuman() {
+  const state = document.getElementById("stateCode").value.toUpperCase();
+  const uid = document.getElementById("uniqueId").value.toUpperCase();
+  const humanNumber = `HN-${state}-${uid}`;
 
-  function searchHuman() {
-    const state = document.getElementById("stateCode").value.toUpperCase();
-    const uid = document.getElementById("uniqueId").value.toUpperCase();
-    const humanNumber = `HN-${state}-${uid}`;
+  console.log("Searching Human Number:", humanNumber);
 
-    if (!state || !uid) return alert("Please enter a valid Human Number.");
+  if (!state || !uid) return alert("Please enter a valid Human Number.");
 
-    db.collection("humans").doc(humanNumber).get().then(doc => {
-      if (doc.exists) {
-        const data = doc.data();
-        console.log("Fetched Data:", data);  // Add this line
-        fetchedName = data.name;
-        fetchedPhone = data.phone;
-        fetchedLang = mapMotherTongue(data.motherTongue);
-        document.getElementById("humanName").textContent = fetchedName;
-        document.getElementById("humanPhone").textContent = fetchedPhone.replace(/(\d{2})\d{5}(\d{3})/, "$1•••••$2");
-        document.getElementById("resultBox").style.display = "block";
-      } else alert("❌ Human not found.");
-    }).catch(err => {
-      console.error("Error fetching Human:", err);
-      alert("Error fetching Human data.");
-    });
-  }
+  db.collection("humans").doc(humanNumber).get().then(doc => {
+    console.log("Doc exists:", doc.exists);
+    
+    if (doc.exists) {
+      const data = doc.data();
+      console.log("Fetched Data:", data); // <- Very important
+
+      fetchedName = data.name;
+      fetchedPhone = data.phone;
+      fetchedLang = mapMotherTongue(data.motherTongue);
+
+      document.getElementById("humanName").textContent = fetchedName;
+      document.getElementById("humanPhone").textContent = fetchedPhone.replace(/(\d{2})\d{5}(\d{3})/, "$1•••••$2");
+      document.getElementById("resultBox").style.display = "block";
+    } else {
+      alert("❌ Human not found.");
+    }
+  }).catch(err => {
+    console.error("Error fetching Human:", err);
+    alert("Error fetching Human data.");
+  });
+}
+
 
   function cancelAccess() {
     document.getElementById("resultBox").style.display = "none";
