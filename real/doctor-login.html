@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Doctor Login - Human Care</title>
+  <title>Human Login - Human Care</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
       authDomain: "humancare-web1.firebaseapp.com",
-      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com",
       projectId: "humancare-web1",
       storageBucket: "humancare-web1.appspot.com",
       messagingSenderId: "986623782553",
@@ -24,32 +23,28 @@
     const db = getFirestore(app);
 
     window.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("doctorLoginForm");
+      const form = document.getElementById("humanLoginForm");
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const doctorId = document.getElementById("doctorId").value.trim();
-        const password = document.getElementById("doctorPassword").value;
+        const humanNumber = document.getElementById("humanNumber").value.trim();
+        const password = document.getElementById("humanPassword").value;
 
         try {
-          const q = query(collection(db, "doctors"), where("doctorNumber", "==", doctorId));
+          const q = query(collection(db, "humans"), where("humanNumber", "==", humanNumber));
           const snapshot = await getDocs(q);
 
           if (snapshot.empty) {
-            alert("Doctor ID not found");
+            alert("Human Number not found");
             return;
           }
 
           const docSnap = snapshot.docs[0];
           const data = docSnap.data();
-          const docId = docSnap.id;
 
           if (data.password === password) {
-            sessionStorage.setItem("doctorId", doctorId);
-            sessionStorage.setItem("doctorName", data.name);
-            sessionStorage.setItem("specializations", JSON.stringify(data.specializations));
-            sessionStorage.setItem("hospitals", JSON.stringify(data.hospitals));
-            sessionStorage.setItem("doctorDocRef", docId);
-            showPopup(data);
+            localStorage.setItem("humanName", data.fullName);
+            localStorage.setItem("humanNumber", data.humanNumber);
+            window.location.href = "human-dashboard.html";
           } else {
             alert("Invalid Password");
           }
@@ -58,34 +53,6 @@
           alert("An error occurred. Please try again later.");
         }
       });
-
-      function showPopup(data) {
-        const popup = document.getElementById("hospitalSpecPopup");
-        const hospitalSelect = document.getElementById("popupHospital");
-        const specializationSelect = document.getElementById("popupSpecialization");
-        popup.style.display = "flex";
-        hospitalSelect.innerHTML = data.hospitals.map(h => `<option value="${h}">${h}</option>`).join('');
-        specializationSelect.innerHTML = data.specializations.map(s => `<option value="${s}">${s}</option>`).join('');
-
-        document.getElementById("savePopupSelection").onclick = async () => {
-          const selectedHospital = hospitalSelect.value;
-          const selectedSpecialization = specializationSelect.value;
-
-          sessionStorage.setItem("activeHospital", selectedHospital);
-          sessionStorage.setItem("activeSpecialization", selectedSpecialization);
-
-          const docRefId = sessionStorage.getItem("doctorDocRef");
-          if (docRefId) {
-            await updateDoc(doc(db, "doctors", docRefId), {
-              activeHospital: selectedHospital,
-              activeSpecialization: selectedSpecialization,
-              lastActive: new Date().toISOString()
-            });
-          }
-
-          window.location.href = "doctor-dashboard.html";
-        };
-      }
     });
   </script>
   <style>
@@ -197,36 +164,6 @@
       font-size: 13px;
       color: #555;
     }
-
-    .popup {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      align-items: center;
-      justify-content: center;
-      z-index: 99;
-    }
-    .popup-box {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      width: 300px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    .popup-box h3 {
-      margin-top: 0;
-      margin-bottom: 20px;
-    }
-    .popup-box select, .popup-box button {
-      width: 100%;
-      margin-bottom: 12px;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
   </style>
 </head>
 <body>
@@ -241,30 +178,21 @@
   <div class="container">
     <div class="login-box">
       <img src="assets/human-logo.png" alt="Human Logo" />
-      <h2>Doctor</h2>
-      <form id="doctorLoginForm">
-        <input type="text" id="doctorId" placeholder="Enter your Doctor ID" required />
-        <input type="password" id="doctorPassword" placeholder="Password" required />
+      <h2>Human</h2>
+      <form id="humanLoginForm">
+        <input type="text" id="humanNumber" placeholder="Enter your Human Number" required />
+        <input type="password" id="humanPassword" placeholder="Password" required />
         <div class="forgot">
           <a href="#">Forgot Password?</a>
         </div>
         <button type="submit">Login</button>
       </form>
       <div class="login-options">
-        <p>New Doctor? <a href="doctor-register.html">Join the Team</a></p>
+        <p>Not a Human yet? <a href="human-register.html">Become a Human</a></p>
       </div>
     </div>
   </div>
 
   <footer>© 2025 HomosaP Healthcare Pvt Ltd. All rights reserved.</footer>
-
-  <div class="popup" id="hospitalSpecPopup">
-    <div class="popup-box">
-      <h3>Select Today's Hospital & Specialization</h3>
-      <select id="popupHospital"></select>
-      <select id="popupSpecialization"></select>
-      <button id="savePopupSelection">Continue</button>
-    </div>
-  </div>
 </body>
 </html>
