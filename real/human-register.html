@@ -107,7 +107,17 @@
       <input type="text" id="bloodGroup" placeholder="Blood Group" required>
       <input type="text" id="caste" placeholder="Caste" required>
       <input type="text" id="education" placeholder="Education" required>
-      <input type="text" id="motherTongue" placeholder="Mother Tongue" required>
+      <select id="motherTongue" required>
+        <option value="">Select Mother Tongue</option>
+        <option value="Kannada">Kannada</option>
+        <option value="Hindi">Hindi</option>
+        <option value="Telugu">Telugu</option>
+        <option value="Tamil">Tamil</option>
+        <option value="Bengali">Bengali</option>
+        <option value="Marathi">Marathi</option>
+        <option value="Malayalam">Malayalam</option>
+        <option value="Other">Other</option>
+      </select>
       <input type="text" id="occupation" placeholder="Occupation" required>
       <input type="text" id="aadhaar" placeholder="Aadhaar Number" required>
       <input type="text" id="income" placeholder="Family Income" required>
@@ -129,24 +139,21 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
       authDomain: "humancare-web1.firebaseapp.com",
-      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com/",
       projectId: "humancare-web1",
       appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
     };
 
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const db = firebase.firestore();
 
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
       'size': 'invisible',
-      'callback': () => {
-        console.log("reCAPTCHA verified");
-      }
+      'callback': () => console.log("reCAPTCHA verified")
     });
 
     document.getElementById("sendOtpBtn").addEventListener("click", () => {
@@ -168,7 +175,6 @@
       const confirmPassword = document.getElementById("confirmPassword").value;
 
       if (newPassword !== confirmPassword) return alert("Passwords do not match.");
-
       if (!window.confirmationResult) return alert("OTP not sent yet.");
 
       window.confirmationResult.confirm(code)
@@ -204,13 +210,13 @@
           }
           const humanNumber = `HN-${stateCode}-${codePart}`;
 
-          db.ref(`humans/${humanNumber}`).set({ ...formData, humanNumber })
+          db.collection("humans").doc(humanNumber).set({ ...formData, humanNumber })
             .then(() => {
               localStorage.setItem('humanName', formData.fullName);
-               localStorage.setItem('humanNumber', humanNumber);
-                window.location.href = "registration-success.html";
-
-            });
+              localStorage.setItem('humanNumber', humanNumber);
+              window.location.href = "registration-success.html";
+            })
+            .catch(error => alert("Error saving data: " + error.message));
         })
         .catch(error => alert("OTP verification failed: " + error.message));
     });
