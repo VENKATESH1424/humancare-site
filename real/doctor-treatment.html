@@ -108,6 +108,7 @@
       margin-top: 20px;
       color: green;
       font-weight: bold;
+      white-space: pre-line;
     }
   </style>
 </head>
@@ -156,7 +157,7 @@
       <button class="cancel" onclick="cancelAccess()">Cancel</button>
       <button class="confirm" onclick="confirmAccess()">Confirm Access</button>
     </div>
-    <div class="toast" id="successMessage" style="display:none;">Access granted. SMS has been sent to the Human.</div>
+    <div class="toast" id="successMessage" style="display:none;"></div>
   </div>
 </div>
 
@@ -235,10 +236,9 @@
     const native = translations[fetchedLang] || "";
     const message = `${english}\n\n${native}`;
 
-    console.log("📩 Dummy SMS would be sent to:", fetchedPhone);
-    console.log("📩 Message content:\n", message);
-
+    document.getElementById("successMessage").innerText = `Access granted. Dummy SMS sent to: ${fetchedPhone}\n\n${message}`;
     document.getElementById("successMessage").style.display = "block";
+
     setTimeout(() => {
       window.location.href = "actual-treatment.html";
     }, 5000);
