@@ -198,7 +198,7 @@
     db.collection("humans").doc(humanNumber).get().then(doc => {
       if (doc.exists) {
         const data = doc.data();
-        fetchedName = data.name || "Unknown";
+        fetchedName = data.fullName || "Unknown";
         fetchedPhone = data.phone || "0000000000";
         fetchedLang = mapMotherTongue(data.motherTongue || "");
 
