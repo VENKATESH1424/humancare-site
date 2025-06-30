@@ -3,212 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Doctor Treatment - Human Care</title>
+  <title>Doctor Dashboard - Human Care</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
       authDomain: "humancare-web1.firebaseapp.com",
+      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com",
       projectId: "humancare-web1",
       storageBucket: "humancare-web1.appspot.com",
       messagingSenderId: "986623782553",
-      appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
+      appId: "1:986623782553:web:fd3cd6c363bb8390be1208",
+      measurementId: "G-NFH96JNR72"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    window.searchHuman = async function () {
-      const state = document.getElementById('state-code').value.trim().toUpperCase();
-      const id = document.getElementById('human-id').value.trim().toUpperCase();
-      if (!state || !id) return alert("Please enter full Human Number.");
+    window.editHospitalSpecialization = async function () {
+      const doctorNumber = sessionStorage.getItem("activeDoctorNumber") || localStorage.getItem("doctorId");
+      if (!doctorNumber) return alert("Doctor ID not found in session.");
+      const q = query(collection(db, "doctors"), where("doctorNumber", "==", doctorNumber));
+      const snapshot = await getDocs(q);
+      if (snapshot.empty) return alert("Doctor profile not found.");
 
-      const humanNumber = `HN-${state}-${id}`;
+      const docData = snapshot.docs[0].data();
+      const docRefId = snapshot.docs[0].id;
+      sessionStorage.setItem("doctorDocRef", docRefId);
 
-      try {
-        const q = query(collection(db, "humans"), where("humanNumber", "==", humanNumber));
-        const snapshot = await getDocs(q);
+      const hospitals = docData.hospitals || [];
+      const specializations = docData.specializations || [];
 
-        if (snapshot.empty) {
-          alert(`No records found for ${humanNumber}`);
-        } else {
-          const data = snapshot.docs[0].data();
-          const name = data.name || "Unknown";
-          const phone = data.phone || "[Phone Hidden]";
+      const hospitalSelect = document.getElementById("hospitalSelect");
+      const specializationSelect = document.getElementById("specializationSelect");
 
-          alert(`Record Found: ${name}\n\nSMS Sent:\nYour records were accessed by Dr. [Doctor Name] via Human Care. If there was no consent from your side, please contact Human Care customer care.`);
+      hospitalSelect.innerHTML = hospitals.map(h => <option value="${h}">${h}</option>).join('');
+      specializationSelect.innerHTML = specializations.map(s => <option value="${s}">${s}</option>).join('');
 
-          window.location.href = `actual-treatment.html?humanNumber=${humanNumber}`;
-        }
-      } catch (error) {
-        console.error("Search failed:", error);
-        alert("Failed to search Human data.");
-      }
-    }
+      document.getElementById("selectionModal").style.display = "flex";
+    };
+
+    window.saveSelection = async function () {
+      const docId = sessionStorage.getItem("doctorDocRef");
+      const hospital = document.getElementById("hospitalSelect").value;
+      const specialization = document.getElementById("specializationSelect").value;
+
+      if (!docId || !hospital || !specialization) return alert("Please select valid options.");
+
+      const docRef = doc(db, "doctors", docId);
+      await updateDoc(docRef, {
+        activeHospital: hospital,
+        activeSpecialization: specialization,
+        lastActive: new Date().toISOString()
+      });
+
+      document.getElementById("activeSelectionDisplay").textContent = ${hospital} / ${specialization};
+      alert("Selection updated.");
+      document.getElementById("selectionModal").style.display = "none";
+    };
   </script>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #e3f2fd, #fce4ec);
-      overflow-x: hidden;
-    }
-
-    header {
-      background: #fff;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      position: relative;
-      z-index: 2;
-    }
-
-    .hamburger {
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    .header-title {
-      font-weight: bold;
-      font-size: 20px;
-      color: #333;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .header-title img {
-      height: 40px;
-    }
-
-    .doctor-id {
-      font-weight: bold;
-      color: #555;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -240px;
-      height: 100vh;
-      width: 220px;
-      background: #fff;
-      box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
-      z-index: 3;
-      padding-top: 80px;
-      transition: left 0.3s ease;
-    }
-
-    .sidebar.active {
-      left: 0;
-    }
-
-    .sidebar a {
-      display: block;
-      padding: 14px 24px;
-      color: #333;
-      text-decoration: none;
-      border-bottom: 1px solid #eee;
-    }
-
-    .sidebar a:hover {
-      background-color: #f0f0f0;
-    }
-
-    .sidebar-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      font-size: 20px;
-      cursor: pointer;
-      color: #333;
-    }
-
-    .main-content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: calc(100vh - 80px);
-      padding: 20px;
-    }
-
-    .search-box {
-      background: #fff;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      max-width: 700px;
-      width: 100%;
-      text-align: center;
-    }
-
-    .search-box h2 {
-      margin-bottom: 24px;
-    }
-
-    .human-inputs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .human-inputs input {
-      padding: 14px 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      width: 120px;
-      text-align: center;
-      font-size: 16px;
-    }
-
-    .human-inputs input:last-child {
-      width: 200px;
-    }
-
-    button {
-      padding: 12px 24px;
-      background-color: #3a7bfd;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+    body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(to right, #e3f2fd, #fce4ec); overflow-x: hidden; }
+    .background-icons { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+    .background-icons .icon { position: absolute; font-size: 28px; color: rgba(0, 0, 0, 0.05); animation: float 12s linear infinite; }
+    @keyframes float { 0% { transform: translateY(100vh); } 100% { transform: translateY(-100vh); } }
+    header { background: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; z-index: 2; }
+    .hamburger { font-size: 20px; cursor: pointer; }
+    .header-title { font-weight: bold; font-size: 20px; color: #333; display: flex; align-items: center; gap: 10px; }
+    .header-title img { height: 40px; }
+    .doctor-id { font-weight: bold; color: #555; }
+    .active-selection { font-size: 14px; color: #888; margin-left: 10px; }
+    .sidebar { position: fixed; top: 0; left: -240px; height: 100vh; width: 220px; background: #fff; box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1); z-index: 3; padding-top: 80px; transition: left 0.3s ease; }
+    .sidebar.active { left: 0; }
+    .sidebar a { display: block; padding: 14px 24px; color: #333; text-decoration: none; border-bottom: 1px solid #eee; }
+    .sidebar a:hover { background-color: #f0f0f0; }
+    .sidebar-close { position: absolute; top: 16px; right: 16px; font-size: 20px; cursor: pointer; color: #333; }
+    .dashboard { margin-left: 240px; max-width: 960px; padding: 40px 16px 60px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; position: relative; z-index: 1; }
+    .tile { background: #fff; padding: 24px 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-size: 16px; font-weight: 500; transition: transform 0.3s ease; cursor: pointer; text-align: center; }
+    .tile:hover { transform: translateY(-5px); }
+    .tile i { font-size: 28px; margin-bottom: 12px; color: #3a7bfd; }
+    #selectionModal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 999; }
+    #selectionModal .modal-box { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center; min-width: 300px; }
+    #selectionModal select { width: 100%; margin: 10px 0; padding: 8px; font-size: 16px; }
+    #selectionModal button { padding: 10px 20px; background: #3a7bfd; color: white; border: none; border-radius: 8px; margin-top: 10px; }
   </style>
 </head>
 <body>
+  <div class="background-icons">
+    <i class="fas fa-heartbeat icon" style="top: 10%; left: 15%; animation-delay: 0s;"></i>
+    <i class="fas fa-user-md icon" style="top: 30%; left: 80%; animation-delay: 2s;"></i>
+    <i class="fas fa-pills icon" style="top: 50%; left: 30%; animation-delay: 4s;"></i>
+    <i class="fas fa-syringe icon" style="top: 70%; left: 70%; animation-delay: 6s;"></i>
+    <i class="fas fa-stethoscope icon" style="top: 90%; left: 50%; animation-delay: 8s;"></i>
+  </div>
+
   <header>
     <div class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
     <div class="header-title">
       <img src="assets/human-logo.png" alt="Human Logo">
       <span>Doctor Dashboard</span>
     </div>
-    <div class="doctor-id" id="doctorIdDisplay">DR-XX-XXXX</div>
+    <div>
+      <div class="doctor-id" id="doctorIdDisplay">DR-XX-XXXX</div>
+      <div class="active-selection" id="activeSelectionDisplay">Not Selected</div>
+    </div>
   </header>
 
   <div class="sidebar" id="sidebar">
     <div class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></div>
     <a href="doctor-dashboard.html">Dashboard</a>
+    <a href="doctor-schedule.html">My Schedule</a>
+    <a href="doctor-patients.html">My Patients</a>
     <a href="doctor-treatment.html">Treatment</a>
-    <a href="#">Logout</a>
+    <a href="doctor-availability.html">Set Availability</a>
+    <a href="#" onclick="editHospitalSpecialization()">Edit Hospital/Specialization</a>
+    <a href="#">About Us</a>
+    <a href="#">Contact Us</a>
+    <a href="#">Terms & Conditions</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#" onclick="logout()">Logout</a>
   </div>
 
-  <div class="main-content">
-    <div class="search-box">
-      <h2>Search Human Records</h2>
-      <div class="human-inputs">
-        <input type="text" value="HN" disabled />
-        <input type="text" id="state-code" placeholder="STATE" maxlength="2" oninput="this.value=this.value.toUpperCase()" />
-        <input type="text" id="human-id" placeholder="ID" oninput="this.value=this.value.toUpperCase()" />
-      </div>
-      <button onclick="searchHuman()">Search</button>
+  <div class="dashboard">
+    <div class="tile" onclick="location.href='doctor-schedule.html'">
+      <i class="fas fa-calendar-check"></i><br>
+      My Schedule
+    </div>
+    <div class="tile" onclick="location.href='doctor-patients.html'">
+      <i class="fas fa-users"></i><br>
+      My Patients
+    </div>
+    <div class="tile" onclick="location.href='doctor-treatment.html'">
+      <i class="fas fa-notes-medical"></i><br>
+      Treatment
+    </div>
+    <div class="tile" onclick="location.href='doctor-availability.html'">
+      <i class="fas fa-clock"></i><br>
+      Set Availability
+    </div>
+  </div>
+
+  <div id="selectionModal">
+    <div class="modal-box">
+      <h3>Select Hospital & Specialization</h3>
+      <select id="hospitalSelect"></select>
+      <select id="specializationSelect"></select><br>
+      <button onclick="saveSelection()">Save</button>
     </div>
   </div>
 
@@ -221,6 +164,12 @@
       const doctorId = sessionStorage.getItem("activeDoctorNumber") || localStorage.getItem("doctorId") || "DR-XX-XXXX";
       document.getElementById("doctorIdDisplay").textContent = doctorId;
     });
+
+    function logout() {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = "doctor-login.html";
+    }
   </script>
 </body>
 </html>
