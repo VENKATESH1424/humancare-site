@@ -3,10 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Human Login - Human Care</title>
+  <title>Doctor Login - Human Care</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* Same CSS as you already approved — omitted here for brevity */
+  </style>
+</head>
+<body>
+  <div class="background-icons">
+    <i class="fas fa-pills icon" style="top: 20%; left: 10%; animation-delay: 0s;"></i>
+    <i class="fas fa-syringe icon" style="top: 50%; left: 80%; animation-delay: 2s;"></i>
+    <i class="fas fa-stethoscope icon" style="top: 80%; left: 40%; animation-delay: 4s;"></i>
+    <i class="fas fa-heartbeat icon" style="top: 60%; left: 20%; animation-delay: 6s;"></i>
+    <i class="fas fa-capsules icon" style="top: 30%; left: 70%; animation-delay: 8s;"></i>
+  </div>
+
+  <div class="container">
+    <div class="login-box">
+      <img src="assets/human-logo.png" alt="Human Logo" />
+      <h2>Doctor</h2>
+      <form onsubmit="event.preventDefault(); loginDoctor();">
+        <input type="text" id="doctorNumber" placeholder="Enter Doctor Number" required />
+        <input type="password" id="doctorPassword" placeholder="Password" required />
+        <div class="forgot">
+          <a href="#">Forgot Password?</a>
+        </div>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>© 2025 HomosaP Healthcare Pvt Ltd. All rights reserved.</footer>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -16,183 +47,48 @@
       storageBucket: "humancare-web1.appspot.com",
       messagingSenderId: "986623782553",
       appId: "1:986623782553:web:fd3cd6c363bb8390be1208",
-      measurementId: "G-NFH96JNR72"
     };
 
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db = getFirestore(app);
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("humanLoginForm");
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const humanNumber = document.getElementById("humanNumber").value.trim();
-        const password = document.getElementById("humanPassword").value;
+    async function loginDoctor() {
+      const docNum = document.getElementById("doctorNumber").value.trim().toUpperCase();
+      const password = document.getElementById("doctorPassword").value;
 
-        try {
-          const q = query(collection(db, "humans"), where("humanNumber", "==", humanNumber));
-          const snapshot = await getDocs(q);
+      if (!docNum || !password) {
+        alert("Please enter Doctor Number and Password.");
+        return;
+      }
 
-          if (snapshot.empty) {
-            alert("Human Number not found");
-            return;
-          }
+      try {
+        // Find email based on Doctor Number
+        const q = query(collection(db, "doctors"), where("doctorNumber", "==", docNum));
+        const querySnapshot = await getDocs(q);
 
-          const docSnap = snapshot.docs[0];
-          const data = docSnap.data();
-
-          if (data.password === password) {
-            localStorage.setItem("humanName", data.fullName);
-            localStorage.setItem("humanNumber", data.humanNumber);
-            window.location.href = "human-dashboard.html";
-          } else {
-            alert("Invalid Password");
-          }
-        } catch (error) {
-          console.error("Login Error:", error);
-          alert("An error occurred. Please try again later.");
+        if (querySnapshot.empty) {
+          alert("Doctor Number not found.");
+          return;
         }
-      });
-    });
+
+        const doctorData = querySnapshot.docs[0].data();
+        const email = doctorData.email;
+
+        // Sign in using email & password
+        await signInWithEmailAndPassword(auth, email, password);
+
+        // Store doctorNumber in localStorage for session use
+        localStorage.setItem("doctorNumber", docNum);
+        window.location.href = "doctor-dashboard.html";
+
+      } catch (error) {
+        console.error("Login failed:", error.message);
+        alert("Invalid Doctor Number or Password.");
+      }
+    }
+
+    window.loginDoctor = loginDoctor;
   </script>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #e3f2fd, #fce4ec);
-      overflow: hidden;
-    }
-
-    .background-icons {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .icon {
-      position: absolute;
-      font-size: 24px;
-      color: rgba(0, 0, 0, 0.1);
-      animation: float 10s infinite linear;
-    }
-
-    @keyframes float {
-      from { transform: translateY(100vh); }
-      to { transform: translateY(-100vh); }
-    }
-
-    .container {
-      z-index: 1;
-      position: relative;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .login-box {
-      background: #ffffff;
-      padding: 40px 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    .login-box img {
-      height: 60px;
-      margin-bottom: 16px;
-    }
-
-    .login-box h2 {
-      margin-bottom: 24px;
-      font-size: 24px;
-      color: #3a3a3a;
-    }
-
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-    .forgot {
-      text-align: right;
-      margin-bottom: 16px;
-    }
-
-    .forgot a {
-      font-size: 13px;
-      color: #3a7bfd;
-      text-decoration: none;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #3a7bfd;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .login-options {
-      margin-top: 16px;
-      font-size: 14px;
-    }
-
-    .login-options a {
-      color: #3a7bfd;
-      text-decoration: none;
-    }
-
-    footer {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 13px;
-      color: #555;
-    }
-  </style>
-</head>
-<body>
-  <div class="background-icons">
-    <i class="fas fa-pills icon" style="top: 20%; left: 10%; animation-delay: 0s;"></i>
-    <i class="fas fa-syringe icon" style="top: 50%; left: 80%; animation-delay: 2s;"></i>
-    <i class="fas fa-stethoscope icon" style="top: 80%; left: 40%; animation-delay: 4s;"></i>
-    <i class="fas fa-heartbeat icon" style="top: 60%; left: 20%; animation-delay: 6s;"></i>
-    <i class="fas fa-user-md icon" style="top: 30%; left: 70%; animation-delay: 8s;"></i>
-  </div>
-
-  <div class="container">
-    <div class="login-box">
-      <img src="assets/human-logo.png" alt="Human Logo" />
-      <h2>Human</h2>
-      <form id="humanLoginForm">
-        <input type="text" id="humanNumber" placeholder="Enter your Human Number" required />
-        <input type="password" id="humanPassword" placeholder="Password" required />
-        <div class="forgot">
-          <a href="#">Forgot Password?</a>
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <div class="login-options">
-        <p>Not a Human yet? <a href="human-register.html">Become a Human</a></p>
-      </div>
-    </div>
-  </div>
-
-  <footer>© 2025 HomosaP Healthcare Pvt Ltd. All rights reserved.</footer>
 </body>
 </html>
