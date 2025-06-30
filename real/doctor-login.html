@@ -6,7 +6,114 @@
   <title>Doctor Login - Human Care</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    /* Same CSS as you already approved — omitted here for brevity */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      overflow: hidden;
+    }
+
+    .background-icons {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .icon {
+      position: absolute;
+      font-size: 24px;
+      color: rgba(0, 0, 0, 0.1);
+      animation: float 10s infinite linear;
+    }
+
+    @keyframes float {
+      from { transform: translateY(100vh); }
+      to { transform: translateY(-100vh); }
+    }
+
+    .container {
+      z-index: 1;
+      position: relative;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      background: #ffffff;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-box img {
+      height: 60px;
+      margin-bottom: 16px;
+    }
+
+    .login-box h2 {
+      margin-bottom: 24px;
+      font-size: 24px;
+      color: #3a3a3a;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .forgot {
+      text-align: right;
+      margin-bottom: 16px;
+    }
+
+    .forgot a {
+      font-size: 13px;
+      color: #3a7bfd;
+      text-decoration: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #3a7bfd;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .login-options {
+      margin-top: 16px;
+      font-size: 14px;
+    }
+
+    .login-options a {
+      color: #3a7bfd;
+      text-decoration: none;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 13px;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -63,7 +170,6 @@
       }
 
       try {
-        // Find email based on Doctor Number
         const q = query(collection(db, "doctors"), where("doctorNumber", "==", docNum));
         const querySnapshot = await getDocs(q);
 
@@ -75,13 +181,9 @@
         const doctorData = querySnapshot.docs[0].data();
         const email = doctorData.email;
 
-        // Sign in using email & password
         await signInWithEmailAndPassword(auth, email, password);
-
-        // Store doctorNumber in localStorage for session use
         localStorage.setItem("doctorNumber", docNum);
         window.location.href = "doctor-dashboard.html";
-
       } catch (error) {
         console.error("Login failed:", error.message);
         alert("Invalid Doctor Number or Password.");
