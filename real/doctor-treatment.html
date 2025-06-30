@@ -144,12 +144,12 @@
   <h2>Search Human Records</h2>
   <div class="human-input">
     <input type="text" value="HN" readonly />
-    <input type="text" id="stateCode" maxlength="2" placeholder="State" />
-    <input type="text" id="uniqueId" maxlength="6" placeholder="ID" />
+    <input type="text" id="stateCode" maxlength="2" placeholder="State" oninput="this.value=this.value.toUpperCase()" />
+    <input type="text" id="uniqueId" maxlength="6" placeholder="ID" oninput="this.value=this.value.toUpperCase()" />
     <button class="btn" onclick="searchHuman()">Search</button>
   </div>
   <div class="result-box" id="resultBox">
-    <p><strong>Name:</strong> <span id="humanname">N/A</span></p>
+    <p><strong>Name:</strong> <span id="name">N/A</span></p>
     <p><strong>Phone:</strong> <span id="humanPhone">+91-••••••••••</span></p>
     <p>⚠️ Do you want to proceed and access this Human’s records?</p>
     <div class="confirm-btns">
@@ -192,8 +192,6 @@
     const state = document.getElementById("stateCode").value.toUpperCase();
     const uid = document.getElementById("uniqueId").value.toUpperCase();
     const humanNumber = `HN-${state}-${uid}`;
-console.log("Looking for document:", humanNumber);
-
 
     if (!state || !uid) return alert("Please enter a valid Human Number.");
 
@@ -211,44 +209,41 @@ console.log("Looking for document:", humanNumber);
         alert("❌ Human not found.");
       }
     }).catch(err => {
-  console.error("Error fetching Human:", err);
-  alert("Error fetching Human data:\n" + err.message);
-});
-
+      console.error("Error fetching Human:", err);
+      alert("Error fetching Human data:\n" + err.message);
+    });
+  }
 
   function cancelAccess() {
     document.getElementById("resultBox").style.display = "none";
   }
-function confirmAccess() {
-  const doctorName = localStorage.getItem("doctorName") || "Dr. HumanCare";
 
-  const translations = {
-    hi: `आपके रिकॉर्ड ${doctorName} द्वारा Human Care के माध्यम से एक्सेस किए गए हैं।`,
-    kn: `${doctorName} ಮೂಲಕ ನಿಮ್ಮ ದಾಖಲಾತಿಗಳನ್ನು Human Care ಮೂಲಕ ಪ್ರವೇಶಿಸಲಾಗಿದೆ.`,
-    ta: `${doctorName} மூலமாக உங்கள் மருத்துவ பதிவுகள் Human Care மூலம் அணுகப்பட்டுள்ளன.`,
-    te: `${doctorName} ద్వారా మీ రికార్డులు Human Care ద్వారా యాక్సెస్ చేయబడ్డాయి.`,
-    ml: `${doctorName} നിങ്ങളുടെ റെക്കോർഡുകൾ Human Care വഴി ആക്സസ് ചെയ്തു.`,
-    mr: `${doctorName} यांनी तुमचे रेकॉर्ड Human Care द्वारे पाहिले आहेत.`,
-    bn: `${doctorName} দ্বারা আপনার রেকর্ডগুলি Human Care-এর মাধ্যমে অ্যাক্সেস করা হয়েছে।`
-  };
+  function confirmAccess() {
+    const doctorName = localStorage.getItem("doctorName") || "Dr. HumanCare";
 
-  const english = `Your records were accessed by ${doctorName} via Human Care. If there was no consent from your side, please contact Human Care.`;
-  const native = translations[fetchedLang] || "";
-  
-  // 🔔 Final message (EN + Native)
-  const message = `${english}\n\n${native}`;
+    const translations = {
+      hi: `आपके रिकॉर्ड ${doctorName} द्वारा Human Care के माध्यम से एक्सेस किए गए हैं।`,
+      kn: `${doctorName} ಮೂಲಕ ನಿಮ್ಮ ದಾಖಲಾತಿಗಳನ್ನು Human Care ಮೂಲಕ ಪ್ರವೇಶಿಸಲಾಗಿದೆ.`,
+      ta: `${doctorName} மூலமாக உங்கள் மருத்துவ பதிவுகள் Human Care மூலம் அணுகப்பட்டுள்ளன.`,
+      te: `${doctorName} ద్వారా మీ రికార్డులు Human Care ద్వారా యాక్సెస్ చేయబడ్డాయి.`,
+      ml: `${doctorName} നിങ്ങളുടെ റെക്കോർഡുകൾ Human Care വഴി ആക്സസ് ചെയ്തു.`,
+      mr: `${doctorName} यांनी तुमचे रेकॉर्ड Human Care द्वारे पाहिले आहेत.`,
+      bn: `${doctorName} দ্বারা আপনার রেকর্ডগুলি Human Care-এর মাধ্যমে অ্যাক্সেস করা হয়েছে।`
+    };
 
-  // 🟡 DUMMY SMS LOGGING
-  console.log("📩 Dummy SMS would be sent to:", fetchedPhone);
-  console.log("📩 Message content:\n", message);
+    const english = `Your records were accessed by ${doctorName} via Human Care. If there was no consent from your side, please contact Human Care.`;
+    const native = translations[fetchedLang] || "";
+    const message = `${english}\n\n${native}`;
 
-  // ✅ Show success toast and delay before redirect
-  document.getElementById("successMessage").style.display = "block";
-  setTimeout(() => {
-    window.location.href = "actual-treatment.html";
-  }, 5000); // 5-second delay
-}
+    console.log("📩 Dummy SMS would be sent to:", fetchedPhone);
+    console.log("📩 Message content:\n", message);
 
+    document.getElementById("successMessage").style.display = "block";
+    setTimeout(() => {
+      window.location.href = "actual-treatment.html";
+    }, 5000);
+  }
 </script>
+
 </body>
 </html>
