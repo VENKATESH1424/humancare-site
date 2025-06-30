@@ -177,6 +177,7 @@
 
   window.onload = () => {
     document.getElementById("doctorIdDisplay").textContent = localStorage.getItem("doctorId") || "DR-XX-XXXX";
+    localStorage.setItem("doctorName", localStorage.getItem("doctorName") || "Dr. HumanCare");
   };
 
   let fetchedPhone = "", fetchedName = "", fetchedLang = "en";
