@@ -179,7 +179,17 @@
     document.getElementById("doctorIdDisplay").textContent = localStorage.getItem("doctorId") || "DR-XX-XXXX";
     localStorage.setItem("doctorName", localStorage.getItem("doctorName") || "Dr. HumanCare");
   };
-
+  // Optional: Re-fetch doctor name if doctorId exists
+const doctorId = localStorage.getItem("doctorId");
+if (doctorId) {
+  db.collection("doctors").where("doctorNumber", "==", doctorId).get().then(snapshot => {
+    if (!snapshot.empty) {
+      const docData = snapshot.docs[0].data();
+      const latestName = docData.fullName || docData.name || "Dr. HumanCare";
+      localStorage.setItem("doctorName", latestName);
+    }
+  });
+}
   let fetchedPhone = "", fetchedName = "", fetchedLang = "en";
 
   function mapMotherTongue(tongue) {
