@@ -175,21 +175,21 @@
     document.getElementById('sidebar').classList.toggle('active');
   }
 
-  window.onload = () => {
-    document.getElementById("doctorIdDisplay").textContent = localStorage.getItem("doctorId") || "DR-XX-XXXX";
-    localStorage.setItem("doctorName", localStorage.getItem("doctorName") || "Dr. HumanCare");
-  };
-  // Optional: Re-fetch doctor name if doctorId exists
-const doctorId = localStorage.getItem("doctorId");
-if (doctorId) {
-  db.collection("doctors").where("doctorNumber", "==", doctorId).get().then(snapshot => {
-    if (!snapshot.empty) {
-      const docData = snapshot.docs[0].data();
-      const latestName = docData.fullName || docData.name || "Dr. HumanCare";
-      localStorage.setItem("doctorName", latestName);
+  window.onload = async () => {
+    const doctorId = localStorage.getItem("doctorId") || "DR-XX-XXXX";
+    document.getElementById("doctorIdDisplay").textContent = doctorId;
+
+    try {
+      const q = await db.collection("doctors").where("doctorNumber", "==", doctorId).get();
+      if (!q.empty) {
+        const docData = q.docs[0].data();
+        localStorage.setItem("doctorName", docData.fullName || "Dr. HumanCare");
+      }
+    } catch (err) {
+      console.error("Error fetching doctor name:", err);
     }
-  });
-}
+  };
+
   let fetchedPhone = "", fetchedName = "", fetchedLang = "en";
 
   function mapMotherTongue(tongue) {
@@ -247,7 +247,7 @@ if (doctorId) {
     const native = translations[fetchedLang] || "";
     const message = `${english}\n\n${native}`;
 
-    document.getElementById("successMessage").innerText = `Access granted. Dummy SMS sent to: ${fetchedPhone}\n\n${message}`;
+    document.getElementById("successMessage").innerText = `Access granted. SMS has been sent\n\n${message}`;
     document.getElementById("successMessage").style.display = "block";
 
     setTimeout(() => {
