@@ -8,9 +8,22 @@
   <style>
     body {
       margin: 0;
-      background: #fefefe;
+      background: linear-gradient(to right, #f4f6f9, #eef2f5);
       font-family: 'Segoe UI', sans-serif;
       padding: 40px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .background-icons .icon {
+      position: absolute;
+      font-size: 28px;
+      color: rgba(0, 0, 0, 0.05);
+      animation: float 18s linear infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh); }
+      100% { transform: translateY(-100vh); }
     }
 
     .prescription-paper {
@@ -18,37 +31,36 @@
       margin: auto;
       background: white;
       padding: 40px;
-      border: 1px solid #ccc;
-      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.08);
+      position: relative;
     }
 
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
-
     .logo {
       flex: 1;
       text-align: center;
     }
-
     .logo img {
       height: 50px;
     }
-
     .details {
       flex: 1;
     }
-
     .details p {
       margin: 4px 0;
+      font-size: 14px;
     }
 
-    .section-divider {
-      border-top: 1px solid #ddd;
+    hr.section-divider {
       margin: 30px 0;
+      border: none;
+      border-top: 1px dashed #ccc;
     }
 
     .summary textarea {
@@ -61,17 +73,19 @@
       resize: vertical;
     }
 
-    .medicine-section h3 {
-      margin-bottom: 10px;
+    .medicine-section {
+      margin-top: 10px;
     }
 
     .medicine-entry {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-bottom: 30px;
-      padding-top: 20px;
-      border-top: 1px dashed #ccc;
+      margin-bottom: 20px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #fdfdfd;
+      border: 1px solid #eee;
     }
 
     .medicine-entry input,
@@ -94,8 +108,12 @@
       font-size: 14px;
     }
 
-    button {
-      padding: 10px 18px;
+    .btns-medicine {
+      text-align: right;
+    }
+    .btns-medicine button {
+      margin-left: 10px;
+      padding: 8px 14px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
@@ -103,23 +121,43 @@
 
     .btn-save { background: #3a7bfd; color: white; }
     .btn-clear { background: #ccc; }
-    .btn-preview { background: #27ae60; color: white; }
-    .btn-delete { background: #e74c3c; color: white; }
-    .add-medicine-btn { background: #3a7bfd; color: white; }
 
-    .btn-section {
-      text-align: right;
-      margin-top: 20px;
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
     }
+
+    .actions button {
+      padding: 12px 20px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .add-btn { background: #3a7bfd; color: white; }
+    .preview-btn { background: #27ae60; color: white; }
+    .delete-btn { background: #e74c3c; color: white; }
+
   </style>
 </head>
 <body>
+
+<div class="background-icons">
+  <i class="fas fa-heartbeat icon" style="top: 10%; left: 10%; animation-delay: 0s;"></i>
+  <i class="fas fa-user-md icon" style="top: 30%; left: 80%; animation-delay: 2s;"></i>
+  <i class="fas fa-pills icon" style="top: 50%; left: 30%; animation-delay: 4s;"></i>
+  <i class="fas fa-syringe icon" style="top: 70%; left: 70%; animation-delay: 6s;"></i>
+  <i class="fas fa-stethoscope icon" style="top: 90%; left: 50%; animation-delay: 8s;"></i>
+</div>
+
 <div class="prescription-paper">
-  <!-- Header -->
+
   <div class="header">
     <div class="details">
-      <h3>Patient Details</h3>
-      <p><strong>Human Number:</strong> HN-XX-XXXX</p>
+      <h4>Patient Details</h4>
+      <p><strong>Human Number:</strong> HN-XX-XXXXXX</p>
       <p><strong>Name:</strong> John Doe</p>
       <p><strong>Age:</strong> 30</p>
       <p><strong>Gender:</strong> Male</p>
@@ -128,72 +166,66 @@
       <img src="assets/human-logo.png" alt="Human Care Logo" />
     </div>
     <div class="details">
-      <h3>Doctor Details</h3>
+      <h4>Doctor Details</h4>
       <p><strong>Name:</strong> Dr. Smith</p>
-      <p><strong>Doctor Number:</strong> DR-XX-XXXX</p>
-      <p><strong>Department:</strong> Cardiology</p>
+      <p><strong>Doctor ID:</strong> DR-XX-XXXX</p>
+      <p><strong>Department:</strong> General</p>
       <p><strong>Hospital:</strong> Apollo</p>
     </div>
   </div>
 
-  <div class="section-divider"></div>
+  <hr class="section-divider">
 
-  <!-- Summary -->
   <div class="summary">
-    <h3>Summary of Treatment</h3>
-    <textarea placeholder="Enter treatment summary here..."></textarea>
+    <h4>Summary of Treatment</h4>
+    <textarea placeholder="Write treatment summary here..."></textarea>
   </div>
 
-  <div class="section-divider"></div>
+  <hr class="section-divider">
 
-  <!-- Medicines -->
   <div class="medicine-section">
-    <h3>Prescribed Medicines</h3>
-    <div id="medicineList"></div>
-    <div style="text-align: right;">
-      <button class="add-medicine-btn" onclick="addMedicine()">+ Add Medicine</button>
+    <h4>Medicines</h4>
+    <div id="medicineContainer"></div>
+  </div>
+
+  <div class="actions">
+    <button class="add-btn" onclick="addMedicine()">+ Add Medicine</button>
+    <div>
+      <button class="preview-btn">Preview</button>
+      <button class="delete-btn">Delete</button>
     </div>
   </div>
 
-  <div class="section-divider"></div>
-
-  <!-- Final Actions -->
-  <div class="btn-section">
-    <button class="btn-preview">Preview</button>
-    <button class="btn-delete">Delete</button>
-  </div>
 </div>
 
 <script>
-function addMedicine() {
-  const container = document.getElementById("medicineList");
-  const div = document.createElement("div");
-  div.className = "medicine-entry";
-  div.innerHTML = `
-    <input type="text" placeholder="Medicine Name (Brand, Dosage)" />
-    <div class="frequency-options">
-      <label><input type="checkbox" /> Morning</label>
-      <label><input type="checkbox" /> Afternoon</label>
-      <label><input type="checkbox" /> Night</label>
-      <label><input type="checkbox" onclick="this.nextElementSibling.style.display=this.checked?'inline-block':'none'" /> Others</label>
-      <input type="text" placeholder="Custom time" style="display:none;" />
-    </div>
-    <select>
-      <option>Before Food</option>
-      <option>After Food</option>
-    </select>
-    <input type="text" placeholder="Duration (e.g. 5 days)" />
-    <input type="text" placeholder="Special Instructions (if any)" />
-    <div style="text-align: right;">
-      <button class="btn-save">Save</button>
-      <button class="btn-clear" onclick="this.closest('.medicine-entry').remove()">Clear</button>
-    </div>
-  `;
-  container.appendChild(div);
-}
-
-// Load one medicine row by default
-// Do not load any medicine row initially window.onload = () => {   document.getElementById("medicineList").innerHTML = ''; };
+  function addMedicine() {
+    const container = document.getElementById('medicineContainer');
+    const block = document.createElement('div');
+    block.className = 'medicine-entry';
+    block.innerHTML = `
+      <input type="text" placeholder="Medicine Name (Brand, Dosage)" />
+      <div class="frequency-options">
+        <label><input type="checkbox" /> Morning</label>
+        <label><input type="checkbox" /> Afternoon</label>
+        <label><input type="checkbox" /> Night</label>
+        <label><input type="checkbox" onclick="this.nextElementSibling.style.display=this.checked?'inline-block':'none'" /> Others</label>
+        <input type="text" placeholder="Custom time" style="display:none;" />
+      </div>
+      <select>
+        <option>Before Food</option>
+        <option>After Food</option>
+      </select>
+      <input type="text" placeholder="Duration (e.g. 5 days)" />
+      <input type="text" placeholder="Special Instructions (if any)" />
+      <div class="btns-medicine">
+        <button class="btn-save">Save</button>
+        <button class="btn-clear" onclick="this.closest('.medicine-entry').remove()">Clear</button>
+      </div>
+    `;
+    container.appendChild(block);
+  }
 </script>
+
 </body>
 </html>
