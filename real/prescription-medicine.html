@@ -1,225 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prescription – Medicine</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medicine Prescription | Human Care</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f7f9fc;
+      background: #fefefe;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px;
     }
-    header {
-      background: #fff;
-      padding: 20px 30px;
+    .prescription-paper {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 40px;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+    .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      border-bottom: 1px solid #eee;
+      margin-bottom: 20px;
     }
-    .header-left, .header-right {
-      text-align: left;
-      font-size: 15px;
-      line-height: 1.6;
-    }
-    .header-center {
+    .logo {
+      flex: 1;
       text-align: center;
     }
-    .header-center img {
+    .logo img {
       height: 50px;
     }
-    .summary-section, .medicines-section {
-      background: white;
-      margin: 30px auto;
-      padding: 30px;
-      max-width: 800px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    .details {
+      flex: 1;
     }
-    .summary-section textarea {
+    .details p {
+      margin: 4px 0;
+    }
+    .summary {
+      margin-top: 20px;
+    }
+    .summary textarea {
       width: 100%;
       height: 100px;
-      padding: 12px;
-      font-size: 16px;
+      padding: 10px;
+      font-size: 14px;
       border: 1px solid #ccc;
-      border-radius: 10px;
+      border-radius: 6px;
       resize: vertical;
     }
-    .medicines-section h3 {
-      margin-top: 0;
+    .medicine-section {
+      margin-top: 30px;
     }
-    .medicine-row {
+    .medicine-entry {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-bottom: 24px;
-      border: 1px solid #eee;
-      border-radius: 12px;
-      padding: 16px;
-      background: #fdfdfd;
+      margin-bottom: 16px;
     }
-    .medicine-row input[type="text"],
-    .medicine-row textarea {
+    .medicine-entry input,
+    .medicine-entry select,
+    .medicine-entry textarea {
       padding: 10px;
-      font-size: 15px;
-      border-radius: 8px;
       border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
       width: 100%;
     }
-    .frequency {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .frequency label {
-      background: #eef1f7;
-      padding: 6px 10px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .frequency input {
-      margin-right: 4px;
-    }
-    .btns {
+    .frequency-options {
       display: flex;
       gap: 10px;
-      margin-top: 10px;
+      flex-wrap: wrap;
     }
-    .btns button {
-      padding: 10px 14px;
-      border: none;
-      border-radius: 8px;
+    .frequency-options label {
       font-size: 14px;
-      cursor: pointer;
     }
-    .save-btn { background: #3a7bfd; color: white; }
-    .clear-btn { background: #ddd; color: black; }
-    .control-actions {
-      text-align: center;
-      margin-top: 40px;
+    .btn-section {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
     }
-    .control-actions button {
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 10px;
-      margin: 0 10px;
+    button {
+      padding: 10px 18px;
       border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
-    .preview-btn { background: #28a745; color: white; }
-    .delete-btn { background: #dc3545; color: white; }
+    .btn-save { background: #3a7bfd; color: white; }
+    .btn-clear { background: #ccc; }
+    .btn-preview { background: #27ae60; color: white; }
+    .btn-delete { background: #e74c3c; color: white; }
   </style>
 </head>
 <body>
-  <header>
-    <div class="header-left">
-      <strong id="doctorNameBar">Dr. Placeholder</strong><br>
-      <span id="doctorIdBar">Doctor ID: DR-XX-XXXX</span><br>
-      <span id="doctorDeptBar">Department: General</span><br>
-      <span id="doctorHospBar">Hospital: City Hospital</span>
+<div class="prescription-paper">
+  <div class="header">
+    <div class="details">
+      <h3>Patient Details</h3>
+      <p><strong>Human Number:</strong> HN-XX-XXXX</p>
+      <p><strong>Name:</strong> John Doe</p>
+      <p><strong>Age:</strong> 30</p>
+      <p><strong>Gender:</strong> Male</p>
     </div>
-    <div class="header-center">
-      <img src="assets/human-logo.png" alt="Human Care">
+    <div class="logo">
+      <img src="assets/human-logo.png" alt="Human Care Logo" />
     </div>
-    <div class="header-right">
-      <strong id="humanNameBar">Human Name</strong><br>
-      <span id="humanIdBar">HN-XX-XXXXXX</span><br>
-      <span id="humanAgeBar">Age: --</span><br>
-      <span id="humanGenderBar">Gender: --</span>
-    </div>
-  </header>
-
-  <div class="summary-section">
-    <h3>Treatment Summary</h3>
-    <textarea placeholder="Write summary of the treatment here..."></textarea>
-  </div>
-
-  <div class="medicines-section">
-    <h3>Medicines</h3>
-    <div id="medicinesList"></div>
-    <div style="margin-top: 16px; text-align: right;">
-      <button class="save-btn" onclick="addMedicineRow()">+ Add Medicine</button>
+    <div class="details">
+      <h3>Doctor Details</h3>
+      <p><strong>Name:</strong> Dr. Smith</p>
+      <p><strong>Doctor Number:</strong> DR-XX-XXXX</p>
+      <p><strong>Department:</strong> Cardiology</p>
+      <p><strong>Hospital:</strong> Apollo</p>
     </div>
   </div>
 
-  <div class="control-actions">
-    <button class="preview-btn">Preview</button>
-    <button class="delete-btn">Delete</button>
+  <div class="summary">
+    <h3>Summary of Treatment</h3>
+    <textarea placeholder="Enter treatment summary here..."></textarea>
   </div>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
-      authDomain: "humancare-web1.firebaseapp.com",
-      projectId: "humancare-web1",
-      appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+  <div class="medicine-section">
+    <h3>Prescribed Medicines</h3>
+    <div class="medicine-entry">
+      <input type="text" placeholder="Medicine Name (Brand, Dosage)" />
+      <div class="frequency-options">
+        <label><input type="checkbox" /> Morning</label>
+        <label><input type="checkbox" /> Afternoon</label>
+        <label><input type="checkbox" /> Night</label>
+        <label><input type="checkbox" onclick="this.nextElementSibling.style.display=this.checked?'inline-block':'none'" /> Others</label>
+        <input type="text" placeholder="Custom time" style="display:none;" />
+      </div>
+      <select>
+        <option>Before Food</option>
+        <option>After Food</option>
+      </select>
+      <input type="text" placeholder="Duration (e.g. 5 days)" />
+      <input type="text" placeholder="Special Instructions (if any)" />
+    </div>
+    <button onclick="addMedicine()">+ Add Medicine</button>
+  </div>
 
-    const doctorId = localStorage.getItem("doctorId") || "DR-XX-XXXX";
-    const doctorName = localStorage.getItem("doctorName") || "Dr. Placeholder";
-    const doctorDept = localStorage.getItem("selectedDept") || "General";
-    const doctorHospital = localStorage.getItem("selectedHospital") || "City Hospital";
+  <div class="btn-section">
+    <button class="btn-save">Save</button>
+    <button class="btn-clear">Clear</button>
+    <button class="btn-preview">Preview</button>
+    <button class="btn-delete">Delete</button>
+  </div>
+</div>
 
-    document.getElementById("doctorIdBar").textContent = `Doctor ID: ${doctorId}`;
-    document.getElementById("doctorNameBar").textContent = doctorName;
-    document.getElementById("doctorDeptBar").textContent = `Department: ${doctorDept}`;
-    document.getElementById("doctorHospBar").textContent = `Hospital: ${doctorHospital}`;
-
-    const humanNumber = localStorage.getItem("currentHumanNumber");
-    if (humanNumber) {
-      db.collection("humans").doc(humanNumber).get().then(doc => {
-        if (doc.exists) {
-          const data = doc.data();
-          document.getElementById("humanNameBar").textContent = data.fullName || "Unknown";
-          document.getElementById("humanIdBar").textContent = humanNumber;
-          document.getElementById("humanAgeBar").textContent = `Age: ${data.age || "--"}`;
-          document.getElementById("humanGenderBar").textContent = `Gender: ${data.gender || "--"}`;
-        }
-      });
-    }
-
-    function addMedicineRow() {
-      const container = document.getElementById('medicinesList');
-      const row = document.createElement('div');
-      row.className = 'medicine-row';
-      row.innerHTML = `
-        <input type="text" placeholder="e.g. Paracetamol (500mg)" />
-        <div class="frequency">
-          <label><input type="checkbox">Morning</label>
-          <label><input type="checkbox">Afternoon</label>
-          <label><input type="checkbox">Night</label>
-          <label><input type="checkbox" onchange="this.nextElementSibling.hidden=!this.checked">Others</label>
-          <input type="text" placeholder="Type if Others" hidden>
-        </div>
-        <input type="text" placeholder="Duration (e.g. 5 days, 1 week)" />
-        <div class="food-pref">
-          <label><input type="radio" name="foodPref-${Date.now()}">Before Food</label>
-          <label><input type="radio" name="foodPref-${Date.now()}">After Food</label>
-        </div>
-        <textarea placeholder="Special instructions (if any)"></textarea>
-        <div class="btns">
-          <button class="save-btn" onclick="saveMedicine(this)">Save</button>
-          <button class="clear-btn" onclick="this.closest('.medicine-row').remove()">Clear</button>
-        </div>
-      `;
-      container.appendChild(row);
-    }
-
-    function saveMedicine(button) {
-      alert("Medicine saved! (Placeholder logic)");
-    }
-
-    window.onload = () => addMedicineRow();
-  </script>
+<script>
+function addMedicine() {
+  const container = document.querySelector('.medicine-section');
+  const template = document.querySelector('.medicine-entry');
+  const clone = template.cloneNode(true);
+  clone.querySelectorAll('input, select').forEach(input => input.value = '');
+  container.insertBefore(clone, container.lastElementChild);
+}
+</script>
 </body>
 </html>
