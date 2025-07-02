@@ -14,7 +14,6 @@
       position: relative;
       overflow-x: hidden;
     }
-
     .background-icons .icon {
       position: absolute;
       font-size: 28px;
@@ -25,7 +24,6 @@
       0% { transform: translateY(100vh); }
       100% { transform: translateY(-100vh); }
     }
-
     .prescription-paper {
       max-width: 800px;
       margin: auto;
@@ -35,7 +33,6 @@
       box-shadow: 0 0 20px rgba(0,0,0,0.08);
       position: relative;
     }
-
     .header {
       display: flex;
       justify-content: space-between;
@@ -56,13 +53,11 @@
       margin: 4px 0;
       font-size: 14px;
     }
-
     hr.section-divider {
       margin: 30px 0;
       border: none;
       border-top: 1px dashed #ccc;
     }
-
     .summary textarea {
       width: 100%;
       height: 100px;
@@ -72,11 +67,9 @@
       border-radius: 6px;
       resize: vertical;
     }
-
     .medicine-section {
       margin-top: 10px;
     }
-
     .medicine-entry {
       display: flex;
       flex-direction: column;
@@ -87,7 +80,6 @@
       background: #fdfdfd;
       border: 1px solid #eee;
     }
-
     .medicine-entry input,
     .medicine-entry select,
     .medicine-entry textarea {
@@ -97,17 +89,14 @@
       font-size: 14px;
       width: 100%;
     }
-
     .frequency-options {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
-
     .frequency-options label {
       font-size: 14px;
     }
-
     .btns-medicine {
       text-align: right;
     }
@@ -118,16 +107,13 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
     .btn-save { background: #3a7bfd; color: white; }
     .btn-clear { background: #ccc; }
-
     .actions {
       display: flex;
       justify-content: space-between;
       margin-top: 30px;
     }
-
     .actions button {
       padding: 12px 20px;
       font-size: 15px;
@@ -135,11 +121,20 @@
       border: none;
       cursor: pointer;
     }
-
     .add-btn { background: #3a7bfd; color: white; }
     .preview-btn { background: #27ae60; color: white; }
     .delete-btn { background: #e74c3c; color: white; }
-
+    #prescriptionPreviewBox {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    #prescriptionPreviewBox h3 {
+      margin-top: 0;
+    }
   </style>
 </head>
 <body>
@@ -153,7 +148,6 @@
 </div>
 
 <div class="prescription-paper">
-
   <div class="header">
     <div class="details">
       <h4>Patient Details</h4>
@@ -163,7 +157,7 @@
       <p><strong>Gender:</strong> Male</p>
     </div>
     <div class="logo">
-      <img src="assets/human-logo.png" alt="Human Care Logo" />
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Health_Care_icon.svg/1200px-Health_Care_icon.svg.png" alt="Human Care Logo" />
     </div>
     <div class="details">
       <h4>Doctor Details</h4>
@@ -175,14 +169,11 @@
   </div>
 
   <hr class="section-divider">
-
   <div class="summary">
     <h4>Summary of Treatment</h4>
     <textarea placeholder="Write treatment summary here..."></textarea>
   </div>
-
   <hr class="section-divider">
-
   <div class="medicine-section">
     <h4>Medicines</h4>
     <div id="medicineContainer"></div>
@@ -191,39 +182,123 @@
   <div class="actions">
     <button class="add-btn" onclick="addMedicine()">+ Add Medicine</button>
     <div>
-      <button class="preview-btn">Preview</button>
-      <button class="delete-btn">Delete</button>
+      <button class="preview-btn" onclick="previewPrescription()">Preview</button>
+      <button class="delete-btn" onclick="clearAll()">Delete</button>
     </div>
   </div>
-
 </div>
 
+<div id="prescriptionPreviewBox"></div>
+
 <script>
+  const savedMedicines = [];
+
   function addMedicine() {
     const container = document.getElementById('medicineContainer');
     const block = document.createElement('div');
     block.className = 'medicine-entry';
     block.innerHTML = `
-      <input type="text" placeholder="Medicine Name (Brand, Dosage)" />
+      <input type="text" class="med-name" placeholder="Medicine Name (Brand, Dosage)" />
       <div class="frequency-options">
-        <label><input type="checkbox" /> Morning</label>
-        <label><input type="checkbox" /> Afternoon</label>
-        <label><input type="checkbox" /> Night</label>
-        <label><input type="checkbox" onclick="this.nextElementSibling.style.display=this.checked?'inline-block':'none'" /> Others</label>
-        <input type="text" placeholder="Custom time" style="display:none;" />
+        <label><input type="checkbox" value="Morning" /> Morning</label>
+        <label><input type="checkbox" value="Afternoon" /> Afternoon</label>
+        <label><input type="checkbox" value="Night" /> Night</label>
+        <label><input type="checkbox" class="custom-check" onclick="this.nextElementSibling.style.display=this.checked?'inline-block':'none'" /> Others</label>
+        <input type="text" class="custom-time" placeholder="Custom time" style="display:none;" />
       </div>
-      <select>
+      <select class="food-timing">
         <option>Before Food</option>
         <option>After Food</option>
       </select>
-      <input type="text" placeholder="Duration (e.g. 5 days)" />
-      <input type="text" placeholder="Special Instructions (if any)" />
+      <input type="text" class="duration" placeholder="Duration (e.g. 5 days)" />
+      <input type="text" class="instructions" placeholder="Special Instructions (if any)" />
       <div class="btns-medicine">
-        <button class="btn-save">Save</button>
+        <button class="btn-save" onclick="saveMedicine(this)">Save</button>
         <button class="btn-clear" onclick="this.closest('.medicine-entry').remove()">Clear</button>
       </div>
     `;
     container.appendChild(block);
+  }
+
+  function saveMedicine(button) {
+    const block = button.closest('.medicine-entry');
+    const medName = block.querySelector('.med-name').value.trim();
+    const frequency = Array.from(block.querySelectorAll('.frequency-options input[type=checkbox]:checked'))
+      .map(cb => cb.value || block.querySelector('.custom-time').value.trim());
+    const foodTiming = block.querySelector('.food-timing').value;
+    const duration = block.querySelector('.duration').value.trim();
+    const instructions = block.querySelector('.instructions').value.trim();
+
+    if (!medName || frequency.length === 0 || !duration) {
+      alert("Please fill all required fields before saving.");
+      return;
+    }
+
+    savedMedicines.push({ medName, frequency, foodTiming, duration, instructions });
+
+    button.innerText = "Saved";
+    button.disabled = true;
+    block.style.borderColor = "#4CAF50";
+  }
+
+  function clearAll() {
+    document.getElementById('medicineContainer').innerHTML = '';
+    document.getElementById('prescriptionPreviewBox').innerHTML = '';
+    savedMedicines.length = 0;
+  }
+
+  function previewPrescription() {
+    try {
+      const patientDetails = document.querySelector('.header .details:nth-child(1)').innerHTML;
+      const doctorDetails = document.querySelector('.header .details:nth-child(3)').innerHTML;
+      const summary = document.querySelector('.summary textarea').value.trim();
+      const logoURL = document.querySelector('.logo img').src;
+
+      let html = `
+      <div class="prescription-paper">
+        <div class="header">
+          <div class="details">${patientDetails}</div>
+          <div class="logo">
+            <img src="${logoURL}" alt="Human Care Logo" />
+          </div>
+          <div class="details">${doctorDetails}</div>
+        </div>
+
+        <hr class="section-divider">
+
+        <div class="summary">
+          <h4>Summary of Treatment</h4>
+          <p>${summary || '<i>No summary provided</i>'}</p>
+        </div>`;
+
+      if (savedMedicines.length > 0) {
+        html += `
+          <hr class="section-divider">
+          <div class="medicine-section">
+            <h4>Medicines</h4>
+            <ul style="padding-left: 18px;">`;
+        savedMedicines.forEach((med, i) => {
+          html += `<li style="margin-bottom:10px;">
+            <strong>${i + 1}. ${med.medName}</strong><br>
+            Timing: ${med.frequency.join(', ')}<br>
+            ${med.foodTiming}, for ${med.duration}<br>
+            ${med.instructions ? "<em>Note:</em> " + med.instructions : ""}
+          </li>`;
+        });
+        html += `</ul></div>`;
+      } else {
+        html += `<p><em>No medicines prescribed.</em></p>`;
+      }
+
+      html += `</div>`; // close prescription-paper
+
+      document.getElementById("prescriptionPreviewBox").innerHTML = html;
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+    } catch (err) {
+      alert("Error generating preview.");
+      console.error(err);
+    }
   }
 </script>
 
