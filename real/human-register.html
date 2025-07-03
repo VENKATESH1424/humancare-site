@@ -35,7 +35,8 @@
       gap: 1rem;
     }
     form input,
-    form select {
+    form select,
+    form textarea {
       padding: 0.8rem;
       font-size: 1rem;
       border: 1px solid #ccc;
@@ -135,9 +136,44 @@
       <input type="text" id="abha" placeholder="ABHA Number (optional)">
       <input type="text" id="esi" placeholder="ESI Number (optional)">
       <input type="text" id="vajpayee" placeholder="Vajpayee Arogyashree Yojana Account Number (optional)">
+
+      <h3 class="full-width" style="margin-top: 2rem; color:#0a2e52;">Health Profile (Optional)</h3>
+      <select id="smokes" class="full-width">
+        <option value="">Smokes?</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+      <select id="drinks" class="full-width">
+        <option value="">Consumes Alcohol?</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+
+      <label class="full-width" style="font-weight:600">Chronic Conditions (select all that apply)</label>
+      <div class="full-width" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+        <label><input type="checkbox" name="chronic" value="Diabetes"> Diabetes</label>
+        <label><input type="checkbox" name="chronic" value="Hypertension"> Hypertension (High BP)</label>
+        <label><input type="checkbox" name="chronic" value="Hypotension"> Hypotension (Low BP)</label>
+        <label><input type="checkbox" name="chronic" value="Asthma"> Asthma</label>
+        <label><input type="checkbox" name="chronic" value="Thyroid Disorders"> Thyroid Disorders</label>
+        <label><input type="checkbox" name="chronic" value="Heart Disease"> Heart Disease</label>
+        <label><input type="checkbox" name="chronic" value="Kidney Disease"> Kidney Disease</label>
+        <label><input type="checkbox" name="chronic" value="Arthritis"> Arthritis</label>
+        <label><input type="checkbox" name="chronic" value="PCOS / PCOD"> PCOS / PCOD</label>
+        <label><input type="checkbox" name="chronic" value="Cancer"> Cancer</label>
+        <label><input type="checkbox" name="chronic" value="Epilepsy"> Epilepsy</label>
+        <label><input type="checkbox" name="chronic" value="HIV/AIDS"> HIV/AIDS</label>
+        <label><input type="checkbox" name="chronic" value="Tuberculosis"> Tuberculosis</label>
+        <label><input type="checkbox" name="chronic" value="Other"> Other</label>
+      </div>
+      <textarea id="chronicOther" class="full-width" rows="1" placeholder="If Other, please specify"></textarea>
+      <textarea id="currentMedications" class="full-width" rows="2" placeholder="Current Medications (if any)"></textarea>
+      <input type="number" id="lastWeight" class="full-width" placeholder="Last Recorded Weight (kg)" />
+      <input type="text" id="lastBP" class="full-width" placeholder="Last Recorded BP (e.g. 120/80)" />
+      <input type="number" id="lastSugar" class="full-width" placeholder="Last Sugar Level (mg/dL)" />
+
       <div id="recaptcha-container" class="full-width"></div>
       <button type="button" id="sendOtpBtn">Send OTP</button>
-
       <div class="otp-section full-width" id="otpSection">
         <input type="text" id="otp" placeholder="Enter OTP" required>
         <input type="password" id="newPassword" placeholder="Create Password" required>
@@ -151,88 +187,8 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
   <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
-    authDomain: "humancare-web1.firebaseapp.com",
-    projectId: "humancare-web1",
-    appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-
-  // ✅ FIX: Proper reCAPTCHA rendering
-  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-    'size': 'invisible',
-    'callback': () => console.log("reCAPTCHA verified")
-  });
-  window.recaptchaVerifier.render(); // 🔧 REQUIRED for invisible reCAPTCHA
-
-  document.getElementById("sendOtpBtn").addEventListener("click", () => {
-    const phone = document.getElementById("phone").value;
-    if (!phone) return alert("Please enter phone number.");
-
-    const appVerifier = window.recaptchaVerifier;
-    firebase.auth().signInWithPhoneNumber('+91' + phone, appVerifier)
-      .then(confirmationResult => {
-        window.confirmationResult = confirmationResult;
-        document.getElementById("otpSection").style.display = "block";
-      })
-      .catch(error => alert("Error sending OTP: " + error.message));
-  });
-
-  document.getElementById("verifyBtn").addEventListener("click", () => {
-    const code = document.getElementById("otp").value;
-    const newPassword = document.getElementById("newPassword").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
-
-    if (newPassword !== confirmPassword) return alert("Passwords do not match.");
-    if (!window.confirmationResult) return alert("OTP not sent yet.");
-
-    window.confirmationResult.confirm(code)
-      .then(result => {
-        const user = result.user;
-        const formData = {
-          fullName: document.getElementById("fullName").value,
-          dob: document.getElementById("dob").value,
-          gender: document.getElementById("gender").value,
-          phone: user.phoneNumber,
-          emergency: document.getElementById("emergency").value,
-          email: document.getElementById("email").value,
-          address: document.getElementById("address").value,
-          bloodGroup: document.getElementById("bloodGroup").value,
-          caste: document.getElementById("caste").value,
-          education: document.getElementById("education").value,
-          motherTongue: document.getElementById("motherTongue").value,
-          occupation: document.getElementById("occupation").value,
-          aadhaar: document.getElementById("aadhaar").value,
-          income: document.getElementById("income").value,
-          bpl: document.getElementById("bpl").value,
-          abha: document.getElementById("abha").value,
-          esi: document.getElementById("esi").value,
-          vajpayee: document.getElementById("vajpayee").value,
-          password: newPassword
-        };
-
-        const stateCode = "KA";
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let codePart = '';
-        for (let i = 0; i < 6; i++) {
-          codePart += characters.charAt(Math.floor(Math.random() * characters.length));
-        }
-        const humanNumber = `HN-${stateCode}-${codePart}`;
-
-        db.collection("humans").doc(humanNumber).set({ ...formData, humanNumber })
-          .then(() => {
-            localStorage.setItem('humanName', formData.fullName);
-            localStorage.setItem('humanNumber', humanNumber);
-            window.location.href = "registration-success.html";
-          })
-          .catch(error => alert("Error saving data: " + error.message));
-      })
-      .catch(error => alert("OTP verification failed: " + error.message));
-  });
-</script>
-
+    const originalVerify = firebase.auth.PhoneAuthProvider.credential;
+    const originalSave = firebase.firestore.DocumentReference.prototype.set;
+  </script>
 </body>
 </html>
