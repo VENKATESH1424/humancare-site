@@ -91,9 +91,49 @@
   <div class="container">
     <h2>Become a Human</h2>
     <form id="registerForm">
-      <!-- Other fields (name, dob, etc.) already present here -->
-
-      <!-- Optional: Only Health Profile shown for demo -->
+      <input type="text" id="fullName" placeholder="Full Name" required>
+      <input type="date" id="dob" placeholder="Date of Birth" required>
+      <select id="gender" required>
+        <option value="">Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+      <input type="text" id="phone" placeholder="Phone Number" required>
+      <input type="text" id="emergency" placeholder="Emergency Contact Number" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="text" id="address" class="full-width" placeholder="Address" required>
+      <select id="bloodGroup" required>
+        <option value="">Select Blood Group</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+      </select>
+      <input type="text" id="caste" placeholder="Caste" required>
+      <input type="text" id="education" placeholder="Education" required>
+      <select id="motherTongue" required>
+        <option value="">Select Mother Tongue</option>
+        <option value="Kannada">Kannada</option>
+        <option value="Hindi">Hindi</option>
+        <option value="Telugu">Telugu</option>
+        <option value="Tamil">Tamil</option>
+        <option value="Bengali">Bengali</option>
+        <option value="Marathi">Marathi</option>
+        <option value="Malayalam">Malayalam</option>
+        <option value="Other">Other</option>
+      </select>
+      <input type="text" id="occupation" placeholder="Occupation" required>
+      <input type="text" id="aadhaar" placeholder="Aadhaar Number" required>
+      <input type="text" id="income" placeholder="Family Income" required>
+      <input type="text" id="bpl" placeholder="BPL Number" required>
+      <input type="text" id="abha" placeholder="ABHA Number (optional)">
+      <input type="text" id="esi" placeholder="ESI Number (optional)">
+      <input type="text" id="vajpayee" placeholder="Vajpayee Arogyashree Yojana Account Number (optional)">
       <h3 class="full-width" style="margin-top: 2rem; color:#0a2e52;">Health Profile (Optional)</h3>
       <select id="smokes" class="full-width">
         <option value="">Smokes?</option>
@@ -105,12 +145,24 @@
         <option value="Yes">Yes</option>
         <option value="No">No</option>
       </select>
-
-      <!-- Chronic conditions checkboxes omitted here for brevity -->
+      <label class="full-width" style="font-weight:600">Chronic Conditions (select all that apply)</label>
+      <div class="full-width" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+        <label><input type="checkbox" name="chronic" value="Diabetes"> Diabetes</label>
+        <label><input type="checkbox" name="chronic" value="Hypertension"> Hypertension</label>
+        <label><input type="checkbox" name="chronic" value="Asthma"> Asthma</label>
+        <label><input type="checkbox" name="chronic" value="Thyroid"> Thyroid</label>
+        <label><input type="checkbox" name="chronic" value="Heart Disease"> Heart Disease</label>
+        <label><input type="checkbox" name="chronic" value="Cancer"> Cancer</label>
+        <label><input type="checkbox" name="chronic" value="Other"> Other</label>
+      </div>
+      <textarea id="chronicOther" class="full-width" rows="1" placeholder="If Other, please specify"></textarea>
+      <textarea id="currentMedications" class="full-width" rows="2" placeholder="Current Medications (if any)"></textarea>
+      <input type="number" id="lastWeight" class="full-width" placeholder="Last Recorded Weight (kg)" />
+      <input type="text" id="lastBP" class="full-width" placeholder="Last Recorded BP (e.g. 120/80)" />
+      <input type="number" id="lastSugar" class="full-width" placeholder="Last Sugar Level (mg/dL)" />
 
       <div id="recaptcha-container" class="full-width"></div>
       <button type="button" id="sendOtpBtn">Send OTP</button>
-
       <div class="otp-section full-width" id="otpSection">
         <input type="text" id="otp" placeholder="Enter OTP" required>
         <input type="password" id="newPassword" placeholder="Create Password" required>
@@ -126,39 +178,35 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
   <script>
-    // Initialize Firebase
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
+      authDomain: "humancare-web1.firebaseapp.com",
+      projectId: "humancare-web1",
+      storageBucket: "humancare-web1.firebasestorage.app",
+      messagingSenderId: "986623782553",
+      appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
     };
-    firebase.initializeApp(firebaseConfig);
 
+    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const db = firebase.firestore();
     let confirmationResult;
 
     window.onload = () => {
       window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        'size': 'normal',
-        'callback': function(response) {
-          console.log("Recaptcha Verified");
-        }
+        size: 'normal',
+        callback: () => console.log("Recaptcha verified")
       });
       recaptchaVerifier.render();
     };
 
     document.getElementById("sendOtpBtn").addEventListener("click", () => {
-      const phoneNumber = document.getElementById("phone").value;
-      if (!phoneNumber.match(/^\d{10}$/)) {
+      const phone = document.getElementById("phone").value;
+      if (!phone.match(/^\d{10}$/)) {
         alert("Enter valid 10-digit phone number.");
         return;
       }
-
-      const fullPhone = "+91" + phoneNumber;
-
+      const fullPhone = "+91" + phone;
       auth.signInWithPhoneNumber(fullPhone, window.recaptchaVerifier)
         .then(result => {
           confirmationResult = result;
@@ -167,31 +215,67 @@
         })
         .catch(error => {
           console.error(error);
-          alert("Failed to send OTP. Check console.");
+          alert("OTP Error: " + error.message);
         });
     });
 
     document.getElementById("verifyBtn").addEventListener("click", () => {
       const otp = document.getElementById("otp").value;
-      const password = document.getElementById("newPassword").value;
+      const pass = document.getElementById("newPassword").value;
       const confirm = document.getElementById("confirmPassword").value;
-
-      if (password !== confirm) {
-        alert("Passwords do not match.");
-        return;
-      }
+      if (pass !== confirm) return alert("Passwords do not match.");
 
       confirmationResult.confirm(otp)
         .then(result => {
           const user = result.user;
-          // Proceed with saving to Firestore if needed here
-          alert("OTP Verified. Registration success.");
+          saveData(user.uid);
+          alert("Registered successfully.");
         })
-        .catch(error => {
-          console.error(error);
-          alert("Invalid OTP.");
+        .catch(err => {
+          console.error(err);
+          alert("OTP verification failed.");
         });
     });
+
+    function saveData(uid) {
+      const chronic = [];
+      document.querySelectorAll('input[name="chronic"]:checked').forEach(cb => chronic.push(cb.value));
+
+      const data = {
+        uid: uid,
+        fullName: document.getElementById("fullName").value,
+        dob: document.getElementById("dob").value,
+        gender: document.getElementById("gender").value,
+        phone: document.getElementById("phone").value,
+        emergency: document.getElementById("emergency").value,
+        email: document.getElementById("email").value,
+        address: document.getElementById("address").value,
+        bloodGroup: document.getElementById("bloodGroup").value,
+        caste: document.getElementById("caste").value,
+        education: document.getElementById("education").value,
+        motherTongue: document.getElementById("motherTongue").value,
+        occupation: document.getElementById("occupation").value,
+        aadhaar: document.getElementById("aadhaar").value,
+        income: document.getElementById("income").value,
+        bpl: document.getElementById("bpl").value,
+        abha: document.getElementById("abha").value,
+        esi: document.getElementById("esi").value,
+        vajpayee: document.getElementById("vajpayee").value,
+        smokes: document.getElementById("smokes").value,
+        drinks: document.getElementById("drinks").value,
+        chronicConditions: chronic,
+        chronicOther: document.getElementById("chronicOther").value,
+        currentMedications: document.getElementById("currentMedications").value,
+        lastWeight: document.getElementById("lastWeight").value,
+        lastBP: document.getElementById("lastBP").value,
+        lastSugar: document.getElementById("lastSugar").value,
+        registeredAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      db.collection("humans").doc(uid).set(data)
+        .then(() => console.log("Saved to Firestore"))
+        .catch(e => console.error("Firestore save error:", e));
+    }
   </script>
 </body>
 </html>
