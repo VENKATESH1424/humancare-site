@@ -10,272 +10,127 @@
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(to right, #e3f2fd, #fce4ec);
-      overflow-x: hidden;
-    }
-    .background-icons {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-    .background-icons .icon {
-      position: absolute;
-      font-size: 28px;
-      color: rgba(0, 0, 0, 0.05);
-      animation: float 12s linear infinite;
-    }
-    @keyframes float {
-      0% { transform: translateY(100vh); }
-      100% { transform: translateY(-100vh); }
     }
     header {
       background: #fff;
       padding: 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      position: relative;
-      z-index: 2;
+    }
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .header-title {
       font-weight: bold;
       font-size: 20px;
       color: #333;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .header-title img {
-      height: 40px;
     }
     .human-id {
       font-weight: bold;
       color: #555;
     }
-    .info-container {
+    .container {
       max-width: 800px;
       margin: 40px auto;
       background: #fff;
+      padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      padding: 24px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      position: relative;
-      z-index: 1;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    .info-container div {
-      font-size: 16px;
+    h2 {
+      text-align: center;
       color: #333;
+      margin-bottom: 30px;
     }
-    .info-container div strong {
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .label {
+      font-weight: 600;
+      color: #555;
+    }
+    .value {
+      color: #222;
+    }
+    .back-btn {
       display: block;
-      color: #777;
-      font-size: 13px;
-      margin-bottom: 4px;
-    }
-    .language-switcher, .back-button {
-      position: fixed;
-      bottom: 20px;
+      margin: 30px auto 0;
+      padding: 10px 20px;
       background: #3a7bfd;
       color: #fff;
       border: none;
-      padding: 10px 14px;
-      border-radius: 50px;
-      font-size: 14px;
+      border-radius: 6px;
       cursor: pointer;
-      z-index: 10;
-    }
-    .language-switcher {
-      right: 20px;
-    }
-    .back-button {
-      left: 20px;
-    }
-    @media (max-width: 600px) {
-      .info-container {
-        grid-template-columns: 1fr;
-        padding: 16px;
-      }
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div class="background-icons">
-    <i class="fas fa-heartbeat icon" style="top: 10%; left: 15%; animation-delay: 0s;"></i>
-    <i class="fas fa-user-md icon" style="top: 30%; left: 80%; animation-delay: 2s;"></i>
-    <i class="fas fa-pills icon" style="top: 50%; left: 30%; animation-delay: 4s;"></i>
-    <i class="fas fa-syringe icon" style="top: 70%; left: 70%; animation-delay: 6s;"></i>
-    <i class="fas fa-stethoscope icon" style="top: 90%; left: 50%; animation-delay: 8s;"></i>
-  </div>
-
   <header>
-    <div class="header-title">
-      <img src="assets/human-logo.png" alt="Human Logo">
-      <span id="headerTitle">My Info</span>
+    <div class="header-center">
+      <img src="assets/human-logo.png" alt="Human Logo" height="40">
+      <span class="header-title">Human Care</span>
     </div>
     <div class="human-id" id="humanNumberDisplay">HN-XX-XXXXXX</div>
   </header>
 
-  <div class="info-container">
-    <div><strong data-i18n="fullName">Full Name</strong><span id="infoName">-</span></div>
-    <div><strong data-i18n="dob">Date of Birth</strong><span id="infoDob">-</span></div>
-    <div><strong data-i18n="gender">Gender</strong><span id="infoGender">-</span></div>
-    <div><strong data-i18n="phone">Phone</strong><span id="infoPhone">-</span></div>
-    <div><strong data-i18n="emergency">Emergency Contact</strong><span id="infoEmergency">-</span></div>
-    <div><strong data-i18n="email">Email</strong><span id="infoEmail">-</span></div>
-    <div style="grid-column: 1 / -1;"><strong data-i18n="address">Address</strong><span id="infoAddress">-</span></div>
-    <div><strong data-i18n="blood">Blood Group</strong><span id="infoBlood">-</span></div>
-    <div><strong data-i18n="caste">Caste</strong><span id="infoCaste">-</span></div>
-    <div><strong data-i18n="education">Education</strong><span id="infoEducation">-</span></div>
-    <div><strong data-i18n="motherTongue">Mother Tongue</strong><span id="infoMotherTongue">-</span></div>
-    <div><strong data-i18n="occupation">Occupation</strong><span id="infoOccupation">-</span></div>
-    <div><strong data-i18n="aadhaar">Aadhaar No</strong><span id="infoAadhaar">-</span></div>
-    <div><strong data-i18n="income">Family Income</strong><span id="infoIncome">-</span></div>
-    <div><strong data-i18n="bpl">BPL No</strong><span id="infoBpl">-</span></div>
-    <div><strong data-i18n="abha">ABHA Number</strong><span id="infoAbha">-</span></div>
-    <div><strong data-i18n="esi">ESI Number</strong><span id="infoEsi">-</span></div>
-    <div><strong data-i18n="vajpayee">Vajpayee ID</strong><span id="infoVajpayee">-</span></div>
+  <div class="container">
+    <h2>My Information</h2>
+    <div class="info-row"><span class="label">Full Name:</span><span class="value" id="infoName">Loading...</span></div>
+    <div class="info-row"><span class="label">Human Number:</span><span class="value" id="infoHumanNumber">Loading...</span></div>
+    <div class="info-row"><span class="label">Date of Birth:</span><span class="value" id="infoDOB">Loading...</span></div>
+    <div class="info-row"><span class="label">Gender:</span><span class="value" id="infoGender">Loading...</span></div>
+    <div class="info-row"><span class="label">Phone Number:</span><span class="value" id="infoPhone">Loading...</span></div>
+    <div class="info-row"><span class="label">Email ID:</span><span class="value" id="infoEmail">Loading...</span></div>
+    <div class="info-row"><span class="label">State:</span><span class="value" id="infoState">Loading...</span></div>
+    <div class="info-row"><span class="label">PIN Code:</span><span class="value" id="infoPIN">Loading...</span></div>
+    <div class="info-row"><span class="label">Date of Registration:</span><span class="value" id="infoRegDate">Loading...</span></div>
+
+    <button class="back-btn" onclick="window.location.href='human-dashboard.html'">← Back to Dashboard</button>
   </div>
 
-  <button class="language-switcher" onclick="cycleLanguage()">🌐</button>
-  <button class="back-button" onclick="location.href='human-dashboard.html'">⬅ Dashboard</button>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-
-  <script>
     const firebaseConfig = {
-            apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
-      authDomain: "humancare-web1.firebaseapp.com",
-      databaseURL: "https://humancare-web1-default-rtdb.firebaseio.com",
-      projectId: "humancare-web1",
-      storageBucket: "humancare-web1.appspot.com",
-      messagingSenderId: "156578165275",
-      appId: "1:156578165275:web:e962a6aa4a1c7a503e2c2a"
-
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MSG_ID",
+      appId: "YOUR_APP_ID"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    const humanNumber = localStorage.getItem("humanNumber") || "HN-XX-XXXXXX";
-    document.getElementById("humanNumberDisplay").innerText = humanNumber;
-
-    db.ref("humans/" + humanNumber).once("value").then(snapshot => {
-      const d = snapshot.val() || {};
-      document.getElementById("infoName").textContent = d.fullName || "-";
-      document.getElementById("infoDob").textContent = d.dob || "-";
-      document.getElementById("infoGender").textContent = d.gender || "-";
-      document.getElementById("infoPhone").textContent = d.phone || "-";
-      document.getElementById("infoEmergency").textContent = d.emergencyContact || "-";
-      document.getElementById("infoEmail").textContent = d.email || "-";
-      document.getElementById("infoAddress").textContent = d.address || "-";
-      document.getElementById("infoBlood").textContent = d.bloodGroup || "-";
-      document.getElementById("infoCaste").textContent = d.caste || "-";
-      document.getElementById("infoEducation").textContent = d.education || "-";
-      document.getElementById("infoMotherTongue").textContent = d.motherTongue || "-";
-      document.getElementById("infoOccupation").textContent = d.occupation || "-";
-      document.getElementById("infoAadhaar").textContent = d.aadhaar || "-";
-      document.getElementById("infoIncome").textContent = d.familyIncome || "-";
-      document.getElementById("infoBpl").textContent = d.bplNumber || "-";
-      document.getElementById("infoAbha").textContent = d.abha || "-";
-      document.getElementById("infoEsi").textContent = d.esi || "-";
-      document.getElementById("infoVajpayee").textContent = d.vajpayee || "-";
-    });
-
-    const translations = {
-      en: {
-        headerTitle: "My Info",
-        fullName: "Full Name",
-        dob: "Date of Birth",
-        gender: "Gender",
-        phone: "Phone",
-        emergency: "Emergency Contact",
-        email: "Email",
-        address: "Address",
-        blood: "Blood Group",
-        caste: "Caste",
-        education: "Education",
-        motherTongue: "Mother Tongue",
-        occupation: "Occupation",
-        aadhaar: "Aadhaar No",
-        income: "Family Income",
-        bpl: "BPL No",
-        abha: "ABHA Number",
-        esi: "ESI Number",
-        vajpayee: "Vajpayee ID"
-      },
-      hi: {
-        headerTitle: "मेरी जानकारी",
-        fullName: "पूरा नाम",
-        dob: "जन्म तिथि",
-        gender: "लिंग",
-        phone: "फ़ोन",
-        emergency: "आपातकालीन संपर्क",
-        email: "ईमेल",
-        address: "पता",
-        blood: "ब्लड ग्रुप",
-        caste: "जाति",
-        education: "शिक्षा",
-        motherTongue: "मातृभाषा",
-        occupation: "पेशा",
-        aadhaar: "आधार नंबर",
-        income: "पारिवारिक आय",
-        bpl: "बीपीएल नंबर",
-        abha: "आभा नंबर",
-        esi: "ईएसआई नंबर",
-        vajpayee: "वजपेयी आईडी"
-      },
-      kn: {
-        headerTitle: "ನನ್ನ ಮಾಹಿತಿ",
-        fullName: "ಪೂರ್ಣ ಹೆಸರು",
-        dob: "ಹುಟ್ಟಿದ ದಿನಾಂಕ",
-        gender: "ಲಿಂಗ",
-        phone: "ದೂರವಾಣಿ",
-        emergency: "ತುರ್ತು ಸಂಪರ್ಕ",
-        email: "ಇಮೇಲ್",
-        address: "ವಿಳಾಸ",
-        blood: "ರಕ್ತದ ಗುಂಪು",
-        caste: "ಜಾತಿ",
-        education: "ಶಿಕ್ಷಣ",
-        motherTongue: "ತಾಯ್ನುಡಿ",
-        occupation: "ಉದ್ಯೋಗ",
-        aadhaar: "ಆಧಾರ್ ಸಂಖ್ಯೆ",
-        income: "ಕುಟುಂಬದ ಆದಾಯ",
-        bpl: "ಬಿಪಿಎಲ್ ಸಂಖ್ಯೆ",
-        abha: "ಆಭಾ ಸಂಖ್ಯೆ",
-        esi: "ಇಎಸ್ಐ ಸಂಖ್ಯೆ",
-        vajpayee: "ವಜಪೇಯ್ ಐಡಿ"
+    const humanNumber = localStorage.getItem("humanNumber");
+    const docRef = doc(db, "humans", humanNumber);
+    getDoc(docRef).then(docSnap => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        document.getElementById("humanNumberDisplay").innerText = humanNumber;
+        document.getElementById("infoName").innerText = data.fullName || '-';
+        document.getElementById("infoHumanNumber").innerText = humanNumber;
+        document.getElementById("infoDOB").innerText = data.dob || '-';
+        document.getElementById("infoGender").innerText = data.gender || '-';
+        document.getElementById("infoPhone").innerText = data.phone || '-';
+        document.getElementById("infoEmail").innerText = data.email || '-';
+        document.getElementById("infoState").innerText = data.state || '-';
+        document.getElementById("infoPIN").innerText = data.pincode || '-';
+        document.getElementById("infoRegDate").innerText = new Date(data.createdAt?.seconds * 1000).toLocaleDateString();
+      } else {
+        alert("No profile found for this Human.");
       }
-    };
-
-    let currentLang = localStorage.getItem("humanLang") || "en";
-    function translateUI() {
-      const t = translations[currentLang] || translations["en"];
-      document.querySelectorAll("[data-i18n]").forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        el.textContent = t[key] || key;
-      });
-      document.getElementById("headerTitle").textContent = t.headerTitle;
-    }
-    function cycleLanguage() {
-      const langs = ["en", "hi", "kn"];
-      const nextIndex = (langs.indexOf(currentLang) + 1) % langs.length;
-      currentLang = langs[nextIndex];
-      localStorage.setItem("humanLang", currentLang);
-      translateUI();
-    }
-
-    window.onload = () => {
-      translateUI();
-    };
+    });
   </script>
 </body>
 </html>
