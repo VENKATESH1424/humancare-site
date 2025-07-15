@@ -58,10 +58,10 @@
             alert("❌ Invalid Password");
           }
 
-        catch (error) {
-  console.error("Login Error:", error.code, error.message); // 👈 shows detailed cause
-  alert("An unexpected error occurred. Please try again later.");
-}
+        } catch (error) {
+          console.error("Login Error:", error.code, error.message);
+          alert("An unexpected error occurred. Please try again later.");
+        }
       });
     });
   </script>
