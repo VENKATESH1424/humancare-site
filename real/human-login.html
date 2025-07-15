@@ -24,6 +24,7 @@
 
     window.addEventListener("DOMContentLoaded", () => {
       const form = document.getElementById("humanLoginForm");
+
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const humanNumber = document.getElementById("humanNumber").value.trim().toUpperCase();
@@ -57,14 +58,14 @@
           } else {
             alert("❌ Invalid Password");
           }
-
         } catch (error) {
-          console.error("Login Error:", error.code, error.message);
+          console.error("Login Error:", error.code || "", error.message || error);
           alert("An unexpected error occurred. Please try again later.");
         }
       });
     });
   </script>
+
   <style>
     body {
       margin: 0;
@@ -176,6 +177,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="background-icons">
     <i class="fas fa-pills icon" style="top: 20%; left: 10%; animation-delay: 0s;"></i>
