@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Info - Human Care</title>
+  <title>My Info | Human Care</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     body {
@@ -15,23 +15,13 @@
       background: #fff;
       padding: 20px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      justify-content: space-between;
     }
-    .header-center {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .header-title {
-      font-weight: bold;
+    header h1 {
       font-size: 20px;
       color: #333;
-    }
-    .human-id {
-      font-weight: bold;
-      color: #555;
     }
     .container {
       max-width: 800px;
@@ -39,98 +29,100 @@
       background: #fff;
       padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.05);
     }
-    h2 {
-      text-align: center;
-      color: #333;
-      margin-bottom: 30px;
+    .info-group {
+      margin-bottom: 20px;
     }
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .label {
-      font-weight: 600;
+    .info-label {
+      font-weight: bold;
       color: #555;
     }
-    .value {
+    .info-value {
+      margin-top: 4px;
       color: #222;
     }
-    .back-btn {
-      display: block;
-      margin: 30px auto 0;
-      padding: 10px 20px;
-      background: #3a7bfd;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #3a7bfd;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #3a7bfd44;
+      padding-bottom: 6px;
+    }
+    @media (max-width: 600px) {
+      .container { margin: 20px; padding: 20px; }
+      .section-title { font-size: 16px; }
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="header-center">
-      <img src="assets/human-logo.png" alt="Human Logo" height="40">
-      <span class="header-title">Human Care</span>
-    </div>
-    <div class="human-id" id="humanNumberDisplay">HN-XX-XXXXXX</div>
+    <h1><i class="fas fa-user"></i> My Info</h1>
+    <div id="humanNumberDisplay">HN-XX-XXXXXX</div>
   </header>
-
   <div class="container">
-    <h2>My Information</h2>
-    <div class="info-row"><span class="label">Full Name:</span><span class="value" id="infoName">Loading...</span></div>
-    <div class="info-row"><span class="label">Human Number:</span><span class="value" id="infoHumanNumber">Loading...</span></div>
-    <div class="info-row"><span class="label">Date of Birth:</span><span class="value" id="infoDOB">Loading...</span></div>
-    <div class="info-row"><span class="label">Gender:</span><span class="value" id="infoGender">Loading...</span></div>
-    <div class="info-row"><span class="label">Phone Number:</span><span class="value" id="infoPhone">Loading...</span></div>
-    <div class="info-row"><span class="label">Email ID:</span><span class="value" id="infoEmail">Loading...</span></div>
-    <div class="info-row"><span class="label">State:</span><span class="value" id="infoState">Loading...</span></div>
-    <div class="info-row"><span class="label">PIN Code:</span><span class="value" id="infoPIN">Loading...</span></div>
-    <div class="info-row"><span class="label">Date of Registration:</span><span class="value" id="infoRegDate">Loading...</span></div>
-
-    <button class="back-btn" onclick="window.location.href='human-dashboard.html'">← Back to Dashboard</button>
+    <div class="section-title">Personal Details</div>
+    <div class="info-group">
+      <div class="info-label">Full Name</div>
+      <div class="info-value" id="fullName">Loading...</div>
+    </div>
+    <div class="info-group">
+      <div class="info-label">Date of Birth</div>
+      <div class="info-value" id="dob">Loading...</div>
+    </div>
+    <div class="info-group">
+      <div class="info-label">Gender</div>
+      <div class="info-value" id="gender">Loading...</div>
+    </div>
+    <div class="section-title">Contact Information</div>
+    <div class="info-group">
+      <div class="info-label">Phone Number</div>
+      <div class="info-value" id="phone">Loading...</div>
+    </div>
+    <div class="info-group">
+      <div class="info-label">Email ID</div>
+      <div class="info-value" id="email">Loading...</div>
+    </div>
+    <div class="info-group">
+      <div class="info-label">Address</div>
+      <div class="info-value" id="address">Loading...</div>
+    </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  <script>
+    const humanNumber = localStorage.getItem("humanNumber") || "HN-XX-XXXXXX";
+    document.getElementById("humanNumberDisplay").innerText = humanNumber;
 
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MSG_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const humanNumber = localStorage.getItem("humanNumber");
-    const docRef = doc(db, "humans", humanNumber);
-    getDoc(docRef).then(docSnap => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        document.getElementById("humanNumberDisplay").innerText = humanNumber;
-        document.getElementById("infoName").innerText = data.fullName || '-';
-        document.getElementById("infoHumanNumber").innerText = humanNumber;
-        document.getElementById("infoDOB").innerText = data.dob || '-';
-        document.getElementById("infoGender").innerText = data.gender || '-';
-        document.getElementById("infoPhone").innerText = data.phone || '-';
-        document.getElementById("infoEmail").innerText = data.email || '-';
-        document.getElementById("infoState").innerText = data.state || '-';
-        document.getElementById("infoPIN").innerText = data.pincode || '-';
-        document.getElementById("infoRegDate").innerText = new Date(data.createdAt?.seconds * 1000).toLocaleDateString();
+    const db = firebase.firestore();
+    db.collection("humans").doc(humanNumber).get().then(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+        document.getElementById("fullName").innerText = data.fullName || "-";
+        document.getElementById("dob").innerText = data.dob || "-";
+        document.getElementById("gender").innerText = data.gender || "-";
+        document.getElementById("phone").innerText = data.phone || "-";
+        document.getElementById("email").innerText = data.email || "-";
+        document.getElementById("address").innerText = data.address || "-";
       } else {
-        alert("No profile found for this Human.");
+        alert("No profile found for this Human Number.");
       }
+    }).catch(error => {
+      console.error("Error fetching profile: ", error);
     });
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
+      authDomain: "humancare-web1.firebaseapp.com",
+      projectId: "humancare-web1",
+      storageBucket: "humancare-web1.firebasestorage.app",
+      messagingSenderId: "986623782553",
+      appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
+    };
+    firebase.initializeApp(firebaseConfig);
   </script>
 </body>
 </html>
