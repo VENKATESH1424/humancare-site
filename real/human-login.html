@@ -26,30 +26,41 @@
       const form = document.getElementById("humanLoginForm");
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const humanNumber = document.getElementById("humanNumber").value.trim();
+        const humanNumber = document.getElementById("humanNumber").value.trim().toUpperCase();
         const password = document.getElementById("humanPassword").value;
+
+        if (!humanNumber || !password) {
+          alert("Please enter both Human Number and Password");
+          return;
+        }
 
         try {
           const docRef = doc(db, "humans", humanNumber);
           const docSnap = await getDoc(docRef);
 
           if (!docSnap.exists()) {
-            alert("Human Number not found");
+            alert("❌ Human Number not found");
             return;
           }
 
           const data = docSnap.data();
 
+          if (!data.password) {
+            alert("⚠️ Password not set. Please reset your password.");
+            return;
+          }
+
           if (data.password === password) {
-            localStorage.setItem("humanName", data.fullName);
+            localStorage.setItem("humanName", data.fullName || "Human");
             localStorage.setItem("humanNumber", humanNumber);
             window.location.href = "human-dashboard.html";
           } else {
-            alert("Invalid Password");
+            alert("❌ Invalid Password");
           }
+
         } catch (error) {
-          console.error("Login Error:", error);
-          alert("An error occurred. Please try again later.");
+          console.error("🔥 Login Error:", error);
+          alert("An unexpected error occurred. Please try again later.");
         }
       });
     });
