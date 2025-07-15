@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Info | Human Care</title>
+  <title>My Info - Human Care</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     body {
@@ -16,113 +16,105 @@
       padding: 20px;
       display: flex;
       align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-    header h1 {
+    .back-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .title {
       font-size: 20px;
+      font-weight: bold;
       color: #333;
     }
-    .container {
-      max-width: 800px;
+    .info-container {
+      max-width: 700px;
       margin: 40px auto;
       background: #fff;
       padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
     }
-    .info-group {
-      margin-bottom: 20px;
+    .info-row {
+      margin-bottom: 16px;
     }
     .info-label {
-      font-weight: bold;
+      font-weight: 600;
       color: #555;
     }
     .info-value {
-      margin-top: 4px;
       color: #222;
-    }
-    .section-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #3a7bfd;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #3a7bfd44;
-      padding-bottom: 6px;
-    }
-    @media (max-width: 600px) {
-      .container { margin: 20px; padding: 20px; }
-      .section-title { font-size: 16px; }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1><i class="fas fa-user"></i> My Info</h1>
-    <div id="humanNumberDisplay">HN-XX-XXXXXX</div>
+    <button class="back-btn" onclick="window.location.href='human-dashboard.html'"><i class="fas fa-arrow-left"></i></button>
+    <span class="title">My Info</span>
+    <div></div>
   </header>
-  <div class="container">
-    <div class="section-title">Personal Details</div>
-    <div class="info-group">
-      <div class="info-label">Full Name</div>
-      <div class="info-value" id="fullName">Loading...</div>
-    </div>
-    <div class="info-group">
-      <div class="info-label">Date of Birth</div>
-      <div class="info-value" id="dob">Loading...</div>
-    </div>
-    <div class="info-group">
-      <div class="info-label">Gender</div>
-      <div class="info-value" id="gender">Loading...</div>
-    </div>
-    <div class="section-title">Contact Information</div>
-    <div class="info-group">
-      <div class="info-label">Phone Number</div>
-      <div class="info-value" id="phone">Loading...</div>
-    </div>
-    <div class="info-group">
-      <div class="info-label">Email ID</div>
-      <div class="info-value" id="email">Loading...</div>
-    </div>
-    <div class="info-group">
-      <div class="info-label">Address</div>
-      <div class="info-value" id="address">Loading...</div>
-    </div>
+
+  <div class="info-container" id="infoContainer">
+    <div class="info-row"><span class="info-label">Full Name: </span><span class="info-value" id="fullName">Loading...</span></div>
+    <div class="info-row"><span class="info-label">Gender: </span><span class="info-value" id="gender"></span></div>
+    <div class="info-row"><span class="info-label">DOB: </span><span class="info-value" id="dob"></span></div>
+    <div class="info-row"><span class="info-label">Phone Number: </span><span class="info-value" id="phone"></span></div>
+    <div class="info-row"><span class="info-label">Email ID: </span><span class="info-value" id="email"></span></div>
+    <div class="info-row"><span class="info-label">Address: </span><span class="info-value" id="address"></span></div>
+    <div class="info-row"><span class="info-label">Aadhar Number: </span><span class="info-value" id="aadhar"></span></div>
+    <div class="info-row"><span class="info-label">State: </span><span class="info-value" id="state"></span></div>
+    <div class="info-row"><span class="info-label">BPL Number: </span><span class="info-value" id="bpl"></span></div>
+    <div class="info-row"><span class="info-label">ABHA Number: </span><span class="info-value" id="abha"></span></div>
+    <div class="info-row"><span class="info-label">ESI Number: </span><span class="info-value" id="esi"></span></div>
+    <div class="info-row"><span class="info-label">Vajpayee Number: </span><span class="info-value" id="vajpayee"></span></div>
   </div>
 
-  <script>
-    const humanNumber = localStorage.getItem("humanNumber") || "HN-XX-XXXXXX";
-    document.getElementById("humanNumberDisplay").innerText = humanNumber;
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const db = firebase.firestore();
-    db.collection("humans").doc(humanNumber).get().then(doc => {
-      if (doc.exists) {
-        const data = doc.data();
-        document.getElementById("fullName").innerText = data.fullName || "-";
-        document.getElementById("dob").innerText = data.dob || "-";
-        document.getElementById("gender").innerText = data.gender || "-";
-        document.getElementById("phone").innerText = data.phone || "-";
-        document.getElementById("email").innerText = data.email || "-";
-        document.getElementById("address").innerText = data.address || "-";
-      } else {
-        alert("No profile found for this Human Number.");
-      }
-    }).catch(error => {
-      console.error("Error fetching profile: ", error);
-    });
-  </script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
-  <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
+     apiKey: "AIzaSyBQZpYn-nXx3ydA95lCH7eduC5cUqE5O6w",
       authDomain: "humancare-web1.firebaseapp.com",
       projectId: "humancare-web1",
       storageBucket: "humancare-web1.firebasestorage.app",
       messagingSenderId: "986623782553",
       appId: "1:986623782553:web:fd3cd6c363bb8390be1208"
     };
-    firebase.initializeApp(firebaseConfig);
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const humanNumber = localStorage.getItem("humanNumber");
+    if (!humanNumber) {
+      alert("No Human Number found in localStorage");
+    } else {
+      const ref = doc(db, "humans", humanNumber);
+      getDoc(ref).then(docSnap => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById("fullName").textContent = data.fullName || "-";
+          document.getElementById("gender").textContent = data.gender || "-";
+          document.getElementById("dob").textContent = data.dob || "-";
+          document.getElementById("phone").textContent = data.phone || "-";
+          document.getElementById("email").textContent = data.email || "-";
+          document.getElementById("address").textContent = data.address || "-";
+          document.getElementById("aadhar").textContent = data.aadhar || "-";
+          document.getElementById("state").textContent = data.state || "-";
+          document.getElementById("bpl").textContent = data.bpl || "-";
+          document.getElementById("abha").textContent = data.abha || "-";
+          document.getElementById("esi").textContent = data.esi || "-";
+          document.getElementById("vajpayee").textContent = data.vajpayee || "-";
+        } else {
+          alert("No such Human data found.");
+        }
+      }).catch(err => {
+        console.error("Error fetching Human info:", err);
+      });
+    }
   </script>
 </body>
 </html>
