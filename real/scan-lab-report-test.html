@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scan Lab Report – Human Care</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background: #f7f7f7;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .highlight {
+      color: green;
+      font-weight: bold;
+    }
+    .loader {
+      margin-top: 20px;
+      font-style: italic;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🧪 Scan Lab Report – Human Care Test</h2>
+
+  <input type="file" id="upload" accept="image/*" />
+  <div class="loader" id="loader" style="display:none;">Scanning... Please wait.</div>
+
+  <div id="result"></div>
+
+  <script>
+    const knownTests = [
+      "Hemoglobin", "WBC", "RBC", "Platelet", "Blood Sugar", "Fasting",
+      "Postprandial", "Cholesterol", "HDL", "LDL", "Triglycerides",
+      "TSH", "T3", "T4", "Vitamin D", "Vitamin B12", "Urea", "Creatinine"
+    ];
+
+    document.getElementById("upload").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      document.getElementById("loader").style.display = "block";
+      document.getElementById("result").innerHTML = "";
+
+      const image = URL.createObjectURL(file);
+      
+      const { data: { text } } = await Tesseract.recognize(image, 'eng', {
+        logger: m => console.log(m)
+      });
+
+      const lines = text.split("\n").map(line => line.trim()).filter(line => line.length > 0);
+
+      const matched = [];
+
+      lines.forEach(line => {
+        knownTests.forEach(test => {
+          if (line.toLowerCase().includes(test.toLowerCase())) {
+            matched.push(`<span class="highlight">${test}</span>: ${line}`);
+          }
+        });
+      });
+
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("result").innerHTML = matched.length > 0 
+        ? matched.join("<br>")
+        : "No known test data found. Try a clearer image.";
+    });
+  </script>
+
+</body>
+</html>
