@@ -1,105 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OCR Structured Viewer</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      display: flex;
-      height: 100vh;
-    }
-    #left, #right {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-    #left {
-      background: #f4f4f4;
-      border-right: 2px solid #ccc;
-    }
-    #ocrImage {
-      max-width: 100%;
-      height: auto;
-    }
-    #structuredOutput {
-      white-space: pre-wrap;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 4px rgba(0,0,0,0.1);
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM Human - OCR Upload</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded shadow-md w-full max-w-3xl">
+    <h2 class="text-2xl font-bold mb-6 text-center">Upload Medical Report (OCR)</h2>
 
-  <div id="left">
-    <h3>📷 Uploaded Image</h3>
-    <input type="file" accept="image/*" onchange="handleImageUpload(event)" />
-    <br><br>
-    <img id="ocrImage" />
-  </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-semibold mb-2">Human Number</label>
+      <input type="text" id="humanNumber" placeholder="HN-KA-XXXX" class="w-full p-2 border rounded">
+    </div>
 
-  <div id="right">
-    <h3>📝 OCR Extracted Text</h3>
-    <div id="structuredOutput">Upload an image to begin...</div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-semibold mb-2">Upload Report (Image or PDF)</label>
+      <input type="file" id="reportFile" accept="image/*,.pdf" class="w-full">
+    </div>
+
+    <button onclick="processOCR()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Extract Text via OCR</button>
+
+    <div class="mt-6">
+      <h3 class="text-lg font-semibold mb-2">Extracted Text:</h3>
+      <pre id="ocrOutput" class="bg-gray-100 p-4 border rounded max-h-96 overflow-y-auto"></pre>
+    </div>
   </div>
 
   <script>
-    async function handleImageUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+    const VISION_API_KEY = 'AIzaSyAMv8OZz6e21ppsnNmMTGC-fMMyQgB7oLk'; // Replace with your key
 
-      const img = document.getElementById("ocrImage");
-      img.src = URL.createObjectURL(file);
+    async function processOCR() {
+      const fileInput = document.getElementById('reportFile');
+      const output = document.getElementById('ocrOutput');
+      const humanNumber = document.getElementById('humanNumber').value.trim();
 
-      // Convert to base64 for Google Vision API
-      const reader = new FileReader();
-      reader.onload = async function () {
-        const base64Image = reader.result.split(",")[1];
-        const visionResponse = await fetch(
-          "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyAMv8OZz6e21ppsnNmMTGC-fMMyQgB7oLk",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              requests: [
-                {
-                  image: { content: base64Image },
-                  features: [{ type: "TEXT_DETECTION" }]
-                }
-              ]
-            }),
-            headers: { "Content-Type": "application/json" }
-          }
-        );
-
-        const result = await visionResponse.json();
-        const rawText = result.responses[0]?.fullTextAnnotation?.text || "No text found.";
-        const cleaned = structureText(rawText);
-        document.getElementById("structuredOutput").textContent = cleaned;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function structureText(text) {
-      const lines = text.split("\n");
-      const output = [];
-
-      for (let line of lines) {
-        // Apply formatting rules
-        if (line.includes(":")) {
-          const parts = line.split(":");
-          output.push(`${parts[0].trim()}: ${parts.slice(1).join(":").trim()}`);
-        } else {
-          output.push(line.trim());
-        }
+      if (!humanNumber || !fileInput.files.length) {
+        alert('Please enter Human Number and select a file.');
+        return;
       }
 
-      return output.join("\n");
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = async () => {
+        const base64Data = reader.result.split(',')[1];
+
+        const requestBody = {
+          requests: [
+            {
+              image: { content: base64Data },
+              features: [{ type: 'TEXT_DETECTION' }]
+            }
+          ]
+        };
+
+        try {
+          const res = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${AIzaSyAMv8OZz6e21ppsnNmMTGC-fMMyQgB7oLk}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+          });
+
+          const result = await res.json();
+          const text = result.responses[0]?.fullTextAnnotation?.text || 'No text found.';
+          output.textContent = text;
+
+          // TODO: Apply parsing rules and prepare for Firebase upload
+        } catch (error) {
+          console.error('OCR error:', error);
+          alert('Failed to extract text. Check console for details.');
+        }
+      };
+
+      reader.readAsDataURL(file);
     }
   </script>
-
 </body>
 </html>
