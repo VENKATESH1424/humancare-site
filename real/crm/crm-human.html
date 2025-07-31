@@ -1,81 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRM Human - OCR Upload</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Medical Report OCR</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f8f9fa;
+    }
+    .report {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 900px;
+      margin: auto;
+    }
+    .report h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .report .section {
+      margin-top: 20px;
+    }
+    .report table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .report table, th, td {
+      border: 1px solid #ccc;
+    }
+    .report th, .report td {
+      padding: 10px;
+      text-align: left;
+    }
+    #output {
+      margin-top: 30px;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-  <div class="bg-white p-8 rounded shadow-md w-full max-w-3xl">
-    <h2 class="text-2xl font-bold mb-6 text-center">Upload Medical Report (OCR)</h2>
+<body>
 
-    <div class="mb-4">
-      <label class="block text-gray-700 font-semibold mb-2">Human Number</label>
-      <input type="text" id="humanNumber" placeholder="HN-KA-XXXX" class="w-full p-2 border rounded">
-    </div>
+  <h1>Upload Medical Report</h1>
+  <input type="file" id="fileInput" accept="image/*" />
+  <button onclick="extractText()">Extract & Display</button>
 
-    <div class="mb-4">
-      <label class="block text-gray-700 font-semibold mb-2">Upload Report (Image or PDF)</label>
-      <input type="file" id="reportFile" accept="image/*,.pdf" class="w-full">
-    </div>
-
-    <button onclick="processOCR()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Extract Text via OCR</button>
-
-    <div class="mt-6">
-      <h3 class="text-lg font-semibold mb-2">Extracted Text:</h3>
-      <pre id="ocrOutput" class="bg-gray-100 p-4 border rounded max-h-96 overflow-y-auto"></pre>
-    </div>
-  </div>
+  <div id="output" class="report"></div>
 
   <script>
-    const VISION_API_KEY = 'AIzaSyAMv8OZz6e21ppsnNmMTGC-fMMyQgB7oLk'; // Replace with your key
+    const apiKey = "AIzaSyAMv8OZz6e21ppsnNmMTGC-fMMyQgB7oLk";
 
-    async function processOCR() {
-      const fileInput = document.getElementById('reportFile');
-      const output = document.getElementById('ocrOutput');
-      const humanNumber = document.getElementById('humanNumber').value.trim();
+    async function extractText() {
+      const fileInput = document.getElementById("fileInput");
+      const outputDiv = document.getElementById("output");
+      outputDiv.innerHTML = "Processing...";
 
-      if (!humanNumber || !fileInput.files.length) {
-        alert('Please enter Human Number and select a file.');
+      if (!fileInput.files.length) {
+        alert("Please select an image file");
         return;
       }
 
       const file = fileInput.files[0];
       const reader = new FileReader();
 
-      reader.onload = async () => {
-        const base64Data = reader.result.split(',')[1];
+      reader.onload = async function () {
+        const base64Image = reader.result.split(',')[1];
 
-        const requestBody = {
+        const visionReq = {
           requests: [
             {
-              image: { content: base64Data },
-              features: [{ type: 'TEXT_DETECTION' }]
+              image: { content: base64Image },
+              features: [{ type: "TEXT_DETECTION" }]
             }
           ]
         };
 
-        try {
-          const res = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${VISION_API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
-          });
+        const response = await fetch(
+          `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(visionReq)
+          }
+        );
 
-          const result = await res.json();
-          const text = result.responses[0]?.fullTextAnnotation?.text || 'No text found.';
-          output.textContent = text;
+        const result = await response.json();
+        const rawText = result.responses[0].fullTextAnnotation.text;
 
-          // TODO: Apply parsing rules and prepare for Firebase upload
-        } catch (error) {
-          console.error('OCR error:', error);
-          alert('Failed to extract text. Check console for details.');
-        }
+        // Sample parsing logic – you should adapt this per report layout
+        const lines = rawText.split('\n');
+        let header = "", patientInfo = "", tableData = [], remarks = "";
+
+        // Smart chunking logic (tune as needed)
+        lines.forEach(line => {
+          if (line.toLowerCase().includes("name") || line.toLowerCase().includes("age")) {
+            patientInfo += line + "<br/>";
+          } else if (line.match(/[0-9].*\s+(mg|mmol|%)\s+/i)) {
+            tableData.push(line.split(/\s{2,}|\t+/));
+          } else if (line.toLowerCase().includes("remark") || line.length > 40) {
+            remarks += line + " ";
+          } else {
+            header += line + "<br/>";
+          }
+        });
+
+        // Render structured report
+        outputDiv.innerHTML = `
+          <h2>Lab Report</h2>
+
+          <div class="section">
+            <strong>Header:</strong><br/>
+            ${header}
+          </div>
+
+          <div class="section">
+            <strong>Patient Info:</strong><br/>
+            ${patientInfo}
+          </div>
+
+          <div class="section">
+            <strong>Test Results:</strong>
+            <table>
+              <tr><th>Test</th><th>Result</th><th>Unit</th><th>Range</th></tr>
+              ${tableData.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}
+            </table>
+          </div>
+
+          <div class="section">
+            <strong>Remarks:</strong><br/>
+            ${remarks}
+          </div>
+        `;
       };
 
       reader.readAsDataURL(file);
     }
   </script>
+
 </body>
 </html>
