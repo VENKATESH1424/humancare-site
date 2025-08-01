@@ -1,93 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>OCR Test Tool - Human Care</title>
+  <meta charset="UTF-8" />
+  <title>Lab Report OCR Tool</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      background: #f4f4f4;
+      background: #f7f9fc;
     }
     h2 {
       color: #333;
     }
-    .box {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    input[type="file"] {
       margin-bottom: 20px;
     }
-    #output {
+    #reportTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    #reportTable th, #reportTable td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    #reportTable th {
+      background-color: #e9eff5;
+    }
+    #rawText {
       white-space: pre-wrap;
-      font-family: monospace;
-      background: #eef;
+      background: #fff;
       padding: 10px;
-      border-radius: 8px;
-      max-height: 400px;
-      overflow-y: auto;
+      border: 1px dashed #ccc;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
+  <h2>🧬 Lab Report OCR Extractor</h2>
+  <input type="file" accept="image/*" id="imageInput" />
+  <button onclick="processImage()">Extract</button>
 
-  <h2>🧪 OCR Test Tool (Google Cloud Vision)</h2>
-
-  <div class="box">
-    <input type="file" id="fileInput" accept="image/*,application/pdf" />
-    <br><br>
-    <button onclick="extractText()">Extract Text</button>
-  </div>
-
-  <div class="box">
-    <h3>📋 Extracted Text:</h3>
-    <div id="output">Waiting for input...</div>
-  </div>
+  <div id="output"></div>
+  <div id="rawText"></div>
 
   <script>
-    async function extractText() {
-      const file = document.getElementById('fileInput').files[0];
-      if (!file) {
-        alert("Please select a file first.");
+    const API_KEY = "YOUR_API_KEY_HERE"; // Replace with your Google Cloud Vision API key
+
+    function processImage() {
+      const fileInput = document.getElementById('imageInput');
+      if (!fileInput.files.length) {
+        alert('Please upload an image.');
         return;
       }
 
       const reader = new FileReader();
       reader.onload = async function () {
-        const base64String = reader.result.split(',')[1];
+        const base64Image = reader.result.split(',')[1];
 
-        const apiKey = "AIzaSyAMv8OZz6e21ppsnNmMTGC-fMMyQgB7oLk"; // Replace with your actual key
+        const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}`, {
+          method: 'POST',
+          body: JSON.stringify({
+            requests: [
+              {
+                image: { content: base64Image },
+                features: [{ type: "TEXT_DETECTION" }]
+              }
+            ]
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
 
-        const requestPayload = {
-          requests: [
-            {
-              image: { content: base64String },
-              features: [{ type: "DOCUMENT_TEXT_DETECTION" }]
-            }
-          ]
-        };
+        const result = await response.json();
+        const text = result.responses[0]?.fullTextAnnotation?.text || '';
+        document.getElementById('rawText').innerText = text;
 
-        try {
-          const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`, {
-            method: 'POST',
-            body: JSON.stringify(requestPayload),
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-
-          const result = await response.json();
-          const text = result.responses?.[0]?.fullTextAnnotation?.text || "No text found.";
-          document.getElementById('output').innerText = text;
-        } catch (err) {
-          console.error("OCR Error:", err);
-          document.getElementById('output').innerText = "An error occurred during OCR.";
-        }
+        renderStructuredReport(text);
       };
-      reader.readAsDataURL(file);
+
+      reader.readAsDataURL(fileInput.files[0]);
+    }
+
+    function renderStructuredReport(text) {
+      const lines = text.split('\n').filter(l => l.trim() !== '');
+
+      const tableData = [];
+      const regex = /^(.{3,40}?)\s{1,10}([0-9.]+)\s{1,5}([a-zA-Z/%μµ]*)\s{1,10}([\d\-–.]+)?$/;
+
+      for (let line of lines) {
+        const match = line.match(regex);
+        if (match) {
+          tableData.push({
+            test: match[1].trim(),
+            value: match[2].trim(),
+            unit: match[3].trim(),
+            reference: match[4] ? match[4].trim() : ''
+          });
+        }
+      }
+
+      if (tableData.length === 0) {
+        document.getElementById('output').innerHTML = `<p>No structured data found. Try another report.</p>`;
+        return;
+      }
+
+      let html = `<h3>Structured Lab Report</h3><table id="reportTable"><thead><tr><th>Test</th><th>Value</th><th>Unit</th><th>Reference</th></tr></thead><tbody>`;
+      for (let row of tableData) {
+        html += `<tr><td>${row.test}</td><td>${row.value}</td><td>${row.unit}</td><td>${row.reference}</td></tr>`;
+      }
+      html += `</tbody></table>`;
+
+      document.getElementById('output').innerHTML = html;
     }
   </script>
-
 </body>
 </html>
