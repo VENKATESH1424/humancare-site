@@ -2,88 +2,92 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>OCR Report Extractor</title>
+  <title>OCR Test Tool - Human Care</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 2rem;
-    }
-    #report-card {
-      margin-top: 20px;
       padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      max-width: 800px;
-      background-color: #f9f9f9;
+      background: #f4f4f4;
     }
-    .field-label {
-      font-weight: bold;
+    h2 {
+      color: #333;
+    }
+    .box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    #output {
+      white-space: pre-wrap;
+      font-family: monospace;
+      background: #eef;
+      padding: 10px;
+      border-radius: 8px;
+      max-height: 400px;
+      overflow-y: auto;
     }
   </style>
 </head>
 <body>
 
-<h2>Upload Lab Report Image</h2>
-<input type="file" id="fileInput" accept="image/*" />
-<button onclick="performOCR()">Extract Report</button>
+  <h2>🧪 OCR Test Tool (Google Cloud Vision)</h2>
 
-<div id="report-card" style="display:none;">
-  <h3>Report Preview</h3>
-  <p><span class="field-label">Patient Name:</span> <span id="patientName"></span></p>
-  <p><span class="field-label">Age:</span> <span id="age"></span></p>
-  <p><span class="field-label">Gender:</span> <span id="gender"></span></p>
-  <p><span class="field-label">Test Name:</span> <span id="testName"></span></p>
-  <p><span class="field-label">Result:</span> <span id="result"></span></p>
-  <p><span class="field-label">Reference Range:</span> <span id="range"></span></p>
-</div>
+  <div class="box">
+    <input type="file" id="fileInput" accept="image/*,application/pdf" />
+    <br><br>
+    <button onclick="extractText()">Extract Text</button>
+  </div>
 
-<script>
-async function performOCR() {
-  const fileInput = document.getElementById('fileInput');
-  if (!fileInput.files.length) return alert("Please select an image");
+  <div class="box">
+    <h3>📋 Extracted Text:</h3>
+    <div id="output">Waiting for input...</div>
+  </div>
 
-  const file = fileInput.files[0];
-  const reader = new FileReader();
-  
-  reader.onload = async function () {
-    const base64Image = reader.result.replace(/^data:image\/(png|jpeg);base64,/, '');
+  <script>
+    async function extractText() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) {
+        alert("Please select a file first.");
+        return;
+      }
 
-    const response = await fetch('https://vision.googleapis.com/v1/images:annotate?key=AIzaSyAMv8OZz6e21ppsnNmMTGC-fMMyQgB7oLk', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        requests: [{
-          image: { content: base64Image },
-          features: [{ type: "TEXT_DETECTION" }]
-        }]
-      })
-    });
+      const reader = new FileReader();
+      reader.onload = async function () {
+        const base64String = reader.result.split(',')[1];
 
-    const data = await response.json();
-    const text = data.responses[0].fullTextAnnotation.text;
-    console.log("OCR Output:", text);
+        const apiKey = "AIzaSyAMv8OZz6e21ppsnNmMTGC-fMMyQgB7oLk"; // Replace with your actual key
 
-    // Basic parsing logic (will be improved based on report format)
-    const patientName = text.match(/Name[:\-]?\s*(.*)/i)?.[1]?.split('\n')[0] || "N/A";
-    const age = text.match(/Age[:\-]?\s*(\d+)/i)?.[1] || "N/A";
-    const gender = text.match(/Gender[:\-]?\s*(Male|Female)/i)?.[1] || "N/A";
-    const testName = text.match(/Test[:\-]?\s*(.*)/i)?.[1]?.split('\n')[0] || "N/A";
-    const result = text.match(/Result[:\-]?\s*([\d.]+)/i)?.[1] || "N/A";
-    const range = text.match(/Reference\s*Range[:\-]?\s*(.*)/i)?.[1]?.split('\n')[0] || "N/A";
+        const requestPayload = {
+          requests: [
+            {
+              image: { content: base64String },
+              features: [{ type: "DOCUMENT_TEXT_DETECTION" }]
+            }
+          ]
+        };
 
-    // Populate UI
-    document.getElementById("patientName").innerText = patientName;
-    document.getElementById("age").innerText = age;
-    document.getElementById("gender").innerText = gender;
-    document.getElementById("testName").innerText = testName;
-    document.getElementById("result").innerText = result;
-    document.getElementById("range").innerText = range;
-    document.getElementById("report-card").style.display = "block";
-  };
+        try {
+          const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`, {
+            method: 'POST',
+            body: JSON.stringify(requestPayload),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
 
-  reader.readAsDataURL(file);
-}
-</script>
+          const result = await response.json();
+          const text = result.responses?.[0]?.fullTextAnnotation?.text || "No text found.";
+          document.getElementById('output').innerText = text;
+        } catch (err) {
+          console.error("OCR Error:", err);
+          document.getElementById('output').innerText = "An error occurred during OCR.";
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
 
 </body>
 </html>
