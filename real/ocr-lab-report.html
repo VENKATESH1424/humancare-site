@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GPT Lab Report OCR</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #preview { border: 1px solid #ccc; padding: 20px; margin-top: 20px; }
+    h2 { margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    table, th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    #loading { display: none; color: green; }
+  </style>
+</head>
+<body>
+  <h1>OCR Lab Report (GPT Only)</h1>
+  <input type="file" id="fileInput" accept="image/*">
+  <button onclick="processImage()">Extract & Preview</button>
+  <p id="loading">Processing with GPT, please wait...</p>
+  <div id="preview"></div>
+
+  <script>
+    async function processImage() {
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files.length) {
+        alert("Please upload an image first.");
+        return;
+      }
+
+      document.getElementById("loading").style.display = "block";
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = async function () {
+        const base64Image = reader.result.split(",")[1];
+
+        try {
+          const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "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" // replace with your key
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [
+                {
+                  role: "system",
+                  content: "You are a medical OCR assistant. Extract and structure lab report details into Header, Body (tests), and Footer."
+                },
+                {
+                  role: "user",
+                  content: [
+                    { type: "text", text: "Extract this lab report and return as JSON with {header, tests, footer}" },
+                    { type: "image_url", image_url: { url: "data:image/png;base64," + base64Image } }
+                  ]
+                }
+              ]
+            })
+          });
+
+          const data = await response.json();
+          console.log("GPT Response:", data);
+
+          let text = data.choices[0].message.content;
+
+          // Try parsing as JSON if GPT returns JSON
+          let structured;
+          try {
+            structured = JSON.parse(text);
+          } catch {
+            structured = { error: "Could not parse JSON", raw: text };
+          }
+
+          renderPreview(structured);
+
+        } catch (err) {
+          console.error(err);
+          alert("Error processing image with GPT.");
+        } finally {
+          document.getElementById("loading").style.display = "none";
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderPreview(structured) {
+      const preview = document.getElementById("preview");
+      if (structured.error) {
+        preview.innerHTML = "<pre>" + JSON.stringify(structured.raw, null, 2) + "</pre>";
+        return;
+      }
+
+      let html = `<h2>Header</h2>`;
+      for (const [key, val] of Object.entries(structured.header || {})) {
+        html += `<p><b>${key}:</b> ${val}</p>`;
+      }
+
+      html += `<h2>Test Results</h2><table><tr><th>Test</th><th>Value</th><th>Unit</th><th>Reference</th></tr>`;
+      (structured.tests || []).forEach(test => {
+        html += `<tr>
+          <td>${test.name || ""}</td>
+          <td>${test.value || ""}</td>
+          <td>${test.unit || ""}</td>
+          <td>${test.reference || ""}</td>
+        </tr>`;
+      });
+      html += `</table>`;
+
+      html += `<h2>Footer</h2>`;
+      for (const [key, val] of Object.entries(structured.footer || {})) {
+        html += `<p><b>${key}:</b> ${val}</p>`;
+      }
+
+      preview.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
