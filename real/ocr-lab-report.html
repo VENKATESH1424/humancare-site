@@ -1,119 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>GPT Lab Report OCR</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OCR Lab Report | Human Care</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    #preview { border: 1px solid #ccc; padding: 20px; margin-top: 20px; }
-    h2 { margin-bottom: 10px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    table, th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    #loading { display: none; color: green; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      text-align: center;
+      padding: 30px;
+    }
+    .upload-box {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-top: 20px;
+      width: 90%;
+      max-width: 500px;
+    }
+    input[type="file"], button {
+      margin: 15px 0;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      background: #38bdf8;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+    pre {
+      text-align: left;
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 10px;
+      overflow-x: auto;
+      color: #38bdf8;
+      max-height: 400px;
+    }
   </style>
 </head>
 <body>
-  <h1>OCR Lab Report (GPT Only)</h1>
-  <input type="file" id="fileInput" accept="image/*">
-  <button onclick="processImage()">Extract & Preview</button>
-  <p id="loading">Processing with GPT, please wait...</p>
-  <div id="preview"></div>
+  <h1>🧾 OCR Lab Report</h1>
+  <p>Upload or capture your lab report image (JPG/PNG)</p>
+
+  <div class="upload-box">
+    <input type="file" id="reportInput" accept="image/*" capture="environment" />
+    <br />
+    <img id="preview" src="" alt="Preview will appear here" />
+    <br />
+    <button id="processBtn">Process Report</button>
+  </div>
+
+  <h2>🧠 Extracted Data (JSON)</h2>
+  <pre id="jsonOutput">No data yet</pre>
 
   <script>
-    async function processImage() {
-      const fileInput = document.getElementById('fileInput');
-      if (!fileInput.files.length) {
-        alert("Please upload an image first.");
-        return;
+    const input = document.getElementById('reportInput');
+    const preview = document.getElementById('preview');
+    const output = document.getElementById('jsonOutput');
+    const processBtn = document.getElementById('processBtn');
+
+    // Replace this with your deployed Cloud Run URL
+    const OCR_API_URL = "https://processlabreport-986623782553.us-central1.run.app";
+
+    let selectedFile = null;
+
+    input.addEventListener('change', (e) => {
+      selectedFile = e.target.files[0];
+      if (selectedFile) {
+        const reader = new FileReader();
+        reader.onload = (event) => (preview.src = event.target.result);
+        reader.readAsDataURL(selectedFile);
       }
+    });
 
-      document.getElementById("loading").style.display = "block";
-      const file = fileInput.files[0];
-      const reader = new FileReader();
+    processBtn.addEventListener('click', async () => {
+      if (!selectedFile) return alert('Please select a file first.');
 
-      reader.onloadend = async function () {
-        const base64Image = reader.result.split(",")[1];
+      output.textContent = '⏳ Processing...';
 
-        try {
-          const response = await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "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" // replace with your key
-            },
-            body: JSON.stringify({
-              model: "gpt-4o-mini",
-              messages: [
-                {
-                  role: "system",
-                  content: "You are a medical OCR assistant. Extract and structure lab report details into Header, Body (tests), and Footer."
-                },
-                {
-                  role: "user",
-                  content: [
-                    { type: "text", text: "Extract this lab report and return as JSON with {header, tests, footer}" },
-                    { type: "image_url", image_url: { url: "data:image/png;base64," + base64Image } }
-                  ]
-                }
-              ]
-            })
-          });
+      const formData = new FormData();
+      formData.append('file', selectedFile);
 
-          const data = await response.json();
-          console.log("GPT Response:", data);
-
-          let text = data.choices[0].message.content;
-
-          // Try parsing as JSON if GPT returns JSON
-          let structured;
-          try {
-            structured = JSON.parse(text);
-          } catch {
-            structured = { error: "Could not parse JSON", raw: text };
-          }
-
-          renderPreview(structured);
-
-        } catch (err) {
-          console.error(err);
-          alert("Error processing image with GPT.");
-        } finally {
-          document.getElementById("loading").style.display = "none";
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function renderPreview(structured) {
-      const preview = document.getElementById("preview");
-      if (structured.error) {
-        preview.innerHTML = "<pre>" + JSON.stringify(structured.raw, null, 2) + "</pre>";
-        return;
+      try {
+        const res = await fetch(OCR_API_URL, { method: 'POST', body: formData });
+        const data = await res.json();
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        output.textContent = '❌ Error: ' + err.message;
       }
-
-      let html = `<h2>Header</h2>`;
-      for (const [key, val] of Object.entries(structured.header || {})) {
-        html += `<p><b>${key}:</b> ${val}</p>`;
-      }
-
-      html += `<h2>Test Results</h2><table><tr><th>Test</th><th>Value</th><th>Unit</th><th>Reference</th></tr>`;
-      (structured.tests || []).forEach(test => {
-        html += `<tr>
-          <td>${test.name || ""}</td>
-          <td>${test.value || ""}</td>
-          <td>${test.unit || ""}</td>
-          <td>${test.reference || ""}</td>
-        </tr>`;
-      });
-      html += `</table>`;
-
-      html += `<h2>Footer</h2>`;
-      for (const [key, val] of Object.entries(structured.footer || {})) {
-        html += `<p><b>${key}:</b> ${val}</p>`;
-      }
-
-      preview.innerHTML = html;
-    }
+    });
   </script>
 </body>
 </html>
